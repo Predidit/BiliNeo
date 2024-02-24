@@ -27,7 +27,6 @@ class _InitPageState extends State<InitPage> {
 
   @override
   Widget build(BuildContext context) {
-    //return _isLoading ? LoadingWidget(value: _loadingProgress) : const RouterOutlet();
     return const RouterOutlet();
   }
 }
