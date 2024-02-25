@@ -42,6 +42,15 @@ dependencies:
   asuka: ^2.2.0
   flutter_mobx: ^2.0.6+5
   dio: ^5.0.0
+  cookie_jar: ^4.0.8
+  dio_cookie_manager: ^3.1.1
+  connectivity_plus: ^4.0.1
+  dio_http2_adapter: ^2.3.1+1
+
+  path_provider: ^2.1.1
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  flutter_smart_dialog: ^4.9.4
 
 dev_dependencies:
   flutter_test:
