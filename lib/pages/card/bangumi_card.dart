@@ -3,6 +3,8 @@ import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:bilineo/utils/constans.dart';
 import 'package:bilineo/utils/utils.dart';
 import 'package:bilineo/bean/bangumi/bangumi_info.dart';
+import 'package:bilineo/pages/card/network_img_layer.dart';
+import 'package:bilineo/pages/card/pbadge.dart';
 import 'package:bilineo/request/bangumi.dart';
 
 // 视频卡片 - 垂直布局
