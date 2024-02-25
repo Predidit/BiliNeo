@@ -5,7 +5,7 @@ import 'package:bilineo/pages/popular/popular_controller.dart';
 class PopularModule extends Module {
   @override
   void binds(i) {
-    //i.addSingleton(PopularController.new);
+    i.addSingleton(PopularController.new);
   }
 
   @override

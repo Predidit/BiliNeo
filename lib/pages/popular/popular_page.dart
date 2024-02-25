@@ -4,7 +4,8 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:bilineo/pages/popular/popular_controller.dart';
 import 'package:bilineo/utils/constans.dart';
 import 'package:bilineo/pages/error/http_error.dart';
-import 'package:get/get.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:bilineo/pages/card/bangumi_card.dart';
 
 class PopularPage extends StatefulWidget {
   const PopularPage({super.key});
@@ -16,7 +17,7 @@ class PopularPage extends StatefulWidget {
 class _PopularPageState extends State<PopularPage> {
   @override
   Widget build(BuildContext context) {
-    final PopularController popularController = Provider.of<PopularController>(context);
+    final PopularController popularController = Modular.get<PopularController>();
     
     return RefreshIndicator(
       onRefresh: () async {
@@ -48,8 +49,12 @@ class _PopularPageState extends State<PopularPage> {
                 if (snapshot.connectionState == ConnectionState.done) {
                   Map data = snapshot.data as Map;
                   if (data['status']) {
-                    return Obx(() => contentGrid(
-                        popularController, popularController.bangumiList));
+                    return Observer(
+                      builder: (_) => contentGrid(
+                        popularController, 
+                        popularController.bangumiList
+                        )
+                      );
                   } else {
                     return HttpError(
                       errMsg: data['msg'],
@@ -78,7 +83,7 @@ class _PopularPageState extends State<PopularPage> {
         crossAxisSpacing: StyleString.cardSpace,
         // 列数
         crossAxisCount: 3,
-        mainAxisExtent: Get.size.width / 3 / 0.65 +
+        mainAxisExtent: MediaQuery.of(context).size.width / 3 / 0.65 +
             MediaQuery.textScalerOf(context).scale(32.0),
       ),
       delegate: SliverChildBuilderDelegate(
