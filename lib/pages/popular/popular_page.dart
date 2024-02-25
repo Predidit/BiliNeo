@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:bilineo/pages/popular/popular_controller.dart';
 import 'package:bilineo/utils/constans.dart';
@@ -15,16 +14,36 @@ class PopularPage extends StatefulWidget {
 }
 
 class _PopularPageState extends State<PopularPage> {
+  final ScrollController scrollController = ScrollController();
+  final PopularController popularController = Modular.get<PopularController>();
+
   @override
-  Widget build(BuildContext context) {
-    final PopularController popularController = Modular.get<PopularController>();
-    
+  void initState() {
+    super.initState();
+    debugPrint('Popular初始化成功');
+    scrollController.addListener(() {
+      if (scrollController.position.pixels >=
+            scrollController.position.maxScrollExtent - 200) {
+        popularController.isLoadingMore = true;
+        popularController.onLoad();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    scrollController.removeListener(() {});
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {   
     return RefreshIndicator(
       onRefresh: () async {
         await popularController.queryBangumiListFeed();
       },
       child: CustomScrollView(
-        controller: popularController.scrollController,
+        controller: scrollController,
         slivers: [
           SliverToBoxAdapter(
             child: Padding(

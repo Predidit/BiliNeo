@@ -3,13 +3,16 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:bilineo/pages/router.dart';
 import 'package:bilineo/pages/init_page.dart';
 import 'package:flutter/material.dart';
+import 'package:bilineo/pages/popular/popular_controller.dart';
 
 class IndexModule extends Module {
   @override
   List<Module> get imports => menu.moduleList;
 
   @override
-  void binds(i) {}
+  void binds(i) {
+    i.addSingleton(PopularController.new);
+  }
 
   @override
   void routes(r) {

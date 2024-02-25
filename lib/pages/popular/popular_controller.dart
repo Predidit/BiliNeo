@@ -37,4 +37,9 @@ abstract class _PopularController with Store {
     isLoadingMore = false;
     return result;
   }
+
+  Future onLoad() async {
+    debugPrint('Popular正在加载更多内容');
+    queryBangumiListFeed(type: 'onLoad');
+  }
 }

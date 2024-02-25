@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:bilineo/pages/menu/menu.dart';
 
+
 class IndexPage extends StatefulWidget {
   //const IndexPage({super.key});
   const IndexPage({Key? key}) : super(key: key);
