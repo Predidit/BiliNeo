@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:bilineo/pages/popular/popular_controller.dart';
+import 'package:bilineo/utils/constans.dart';
+import 'package:bilineo/pages/error/http_error.dart';
+import 'package:get/get.dart';
 
 class PopularPage extends StatefulWidget {
   const PopularPage({super.key});
@@ -14,31 +17,7 @@ class _PopularPageState extends State<PopularPage> {
   @override
   Widget build(BuildContext context) {
     final PopularController popularController = Provider.of<PopularController>(context);
-    // return Scaffold(
-    //   appBar: AppBar(
-    //     title: Text('Modular RxList Test'),
-    //   ),
-    //   body: ListView.builder(
-    //     itemCount: controller.items.length,
-    //     itemBuilder: (context, index) {
-    //       return ListTile(
-    //         title: Text(controller.items[index]),
-    //         trailing: IconButton(
-    //           icon: Icon(Icons.delete),
-    //           onPressed: () {
-    //             controller.removeItem(index);
-    //           },
-    //         ),
-    //       );
-    //     },
-    //   ),
-    //   floatingActionButton: FloatingActionButton(
-    //     onPressed: () {
-    //       controller.addItem('Item ${controller.items.length + 1}');
-    //     },
-    //     child: Icon(Icons.add),
-    //   ),
-    // );
+    
     return RefreshIndicator(
       onRefresh: () async {
         await popularController.queryBangumiListFeed();
@@ -64,7 +43,7 @@ class _PopularPageState extends State<PopularPage> {
             padding: const EdgeInsets.fromLTRB(
                 StyleString.safeSpace, 0, StyleString.safeSpace, 0),
             sliver: FutureBuilder(
-              future: _futureBuilderFuture,
+              future: popularController.queryBangumiListFeed(),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
                   Map data = snapshot.data as Map;
@@ -75,7 +54,6 @@ class _PopularPageState extends State<PopularPage> {
                     return HttpError(
                       errMsg: data['msg'],
                       fn: () {
-                        _futureBuilderFuture =
                             popularController.queryBangumiListFeed();
                       },
                     );
@@ -87,6 +65,29 @@ class _PopularPageState extends State<PopularPage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget contentGrid(ctr, bangumiList) {
+    return SliverGrid(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        // 行间距
+        mainAxisSpacing: StyleString.cardSpace - 2,
+        // 列间距
+        crossAxisSpacing: StyleString.cardSpace,
+        // 列数
+        crossAxisCount: 3,
+        mainAxisExtent: Get.size.width / 3 / 0.65 +
+            MediaQuery.textScalerOf(context).scale(32.0),
+      ),
+      delegate: SliverChildBuilderDelegate(
+        (BuildContext context, int index) {
+          return bangumiList!.isNotEmpty
+              ? BangumiCardV(bangumiItem: bangumiList[index])
+              : null;
+        },
+        childCount: bangumiList!.isNotEmpty ? bangumiList!.length : 10,
       ),
     );
   }
