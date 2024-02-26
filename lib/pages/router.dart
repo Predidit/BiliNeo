@@ -1,6 +1,7 @@
 import 'package:bilineo/pages/my/my_module.dart';
 import 'package:bilineo/pages/rating/rating_module.dart';
 import 'package:bilineo/pages/popular/popular_module.dart';
+import 'package:bilineo/pages/video/video_module.dart';
 import 'package:flutter_modular/flutter_modular.dart';
  
 class MenuRouteItem {
@@ -45,5 +46,9 @@ final MenuRoute menu = MenuRoute([
   MenuRouteItem(
     path: "/my",
     module: MyModule(),
+  ),
+  MenuRouteItem(
+    path: "/video",
+    module: VideoModule(),
   ),
 ]);
