@@ -58,6 +58,8 @@ dependencies:
   media_kit_video: ^1.2.4                        # For video rendering.
   media_kit_libs_video: ^1.0.4                   # Native video dependencies.
 
+  universal_platform: ^1.0.0+1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

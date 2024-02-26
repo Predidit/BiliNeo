@@ -14,8 +14,8 @@ class PlayerItem extends StatefulWidget {
 class _PlayerItemState extends State<PlayerItem> {
   // late final player = Player();
   // late final playerController = VideoController(player) ;
-  late final controller = Modular.get<PlayerController>();
-  late final playerController = controller.videoController;
+  // late final controller = Modular.get<PlayerController>().mediaPlayer;
+  late final videoController = Modular.get<PlayerController>().videoController;
 
   @override
   void initState() {
@@ -36,7 +36,7 @@ class _PlayerItemState extends State<PlayerItem> {
         SizedBox(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.width * 9.0 / 16.0,
-          child: Video(controller: playerController),
+          child: Video(controller: videoController),
         ),
       ],
     );

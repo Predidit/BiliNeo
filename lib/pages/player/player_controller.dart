@@ -1,9 +1,18 @@
+import 'dart:io';
+
+import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 import 'package:bilineo/request/video.dart';
 import 'package:bilineo/pages/player/player_url.dart';
+import 'package:bilineo/pages/player/play_quality.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
+import 'package:bilineo/pages/player/player_datasource.dart';
+import 'package:universal_platform/universal_platform.dart';
+import 'package:bilineo/utils/utils.dart';
+import 'package:bilineo/utils/video.dart';
+import 'package:bilineo/request/constants.dart';
 
 
 part 'player_controller.g.dart';
@@ -33,6 +42,14 @@ abstract class _PlayerController with Store {
   @observable
   late dynamic bangumiItem;
 
+  //是否展示封面图
+  @observable
+  bool isShowCover = true;
+
+  //全屏方向
+  @observable
+  late String direction;
+
   late PlayUrlModel data;
   late VideoItem firstVideo;
   late AudioItem firstAudio;
@@ -40,16 +57,203 @@ abstract class _PlayerController with Store {
   late String audioUrl;
   late Duration defaultST;
 
-  late final player = Player();
-  late final videoController = VideoController(player) ;
+  late Player mediaPlayer;
+  late VideoController videoController;
 
   bool autoPlay = true;
+  bool enableHA = true;
+
+  late bool enableCDN;
+  late int? cacheVideoQa;
+  late String cacheDecode;
+  late int cacheAudioQa;
+  late VideoQuality currentVideoQa;
+  late VideoDecodeFormats currentDecodeFormats;
+  late AudioQuality currentAudioQa;
+
+  // 当前播放器状态
+  @observable
+  late String dataStatus;
+
+  //播放器尺寸
+  late double width;
+  late double height;
+
+  PlaylistMode looping = PlaylistMode.none;
 
   @action
-  void init() {
-
+  void init(DataSource dataSource) async {
+    // mediaPlayer = await createVideoController(dataSource, looping, enableHA, width, height);
+    setDataSource(DataSource(
+        // Todo
+        videoSource: videoUrl,
+        audioSource: audioUrl,
+        type: DataSourceType.network,
+        httpHeaders: {
+          'user-agent':
+              'Mozilla/5.0 (Macintosh; Intel Mac OS X 13_3_1) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.4 Safari/605.1.15',
+          'referer': HttpString.baseUrl
+        },
+      ),
+      // 硬解
+      enableHAS: enableHA,
+      bvidS: bvid,
+      cidS: cid,
+      autoplayS: autoPlay,);
   }
 
+  //初始化资源
+  Future<void> setDataSource(
+    DataSource dataSource, {
+    bool autoplayS = true,
+    // 默认不循环
+    PlaylistMode loopingS = PlaylistMode.none,
+    // 初始化播放位置
+    Duration seekToS = Duration.zero,
+    // 初始化播放速度
+    double speedS = 1.0,
+    // 硬件加速
+    bool enableHAS = true,
+    double? widthS,
+    double? heightS,
+    Duration? durationS,
+    // 方向
+    String? directionS,
+    // 记录历史记录
+    String bvidS = '',
+    int cidS = 0,
+    // 历史记录开关
+    bool enableHeartS = true,
+    // 是否首次加载
+    bool isFirstTimeS = true,
+  }) async {
+    try {
+      autoPlay = autoplayS;
+      looping = loopingS;
+      // 初始化视频倍速
+      // _playbackSpeed.value = speed;
+      // 初始化数据加载状态
+      dataStatus = 'loading';
+      // 初始化全屏方向
+      direction = direction ?? 'horizontal';
+      width = widthS ?? 600;
+      height = heightS ?? 300;
+      bvid = bvidS;
+      cid = cidS;
+
+      if (mediaPlayer != null &&
+          mediaPlayer!.state.playing) {
+        mediaPlayer.pause();
+        dataStatus = 'paused';
+        debugPrint('播放暂停');
+      }
+      // 配置Player 音轨、字幕等等
+      mediaPlayer = await createVideoController(
+          dataSource, looping, enableHA, width, height);
+      // 获取视频时长 00:00
+      
+      // 记录播放时间以待下次播放 (Todo)
+
+      // 数据加载完成
+      dataStatus = 'loaded';
+      debugPrint('视频加载完成');
+    } catch (err) {
+      dataStatus = 'error';
+      print('plPlayer err:  $err');
+    }
+  }
+
+  // 配置播放器
+  Future<Player> createVideoController(
+    DataSource dataSource,
+    PlaylistMode looping,
+    bool enableHA,
+    double? width,
+    double? height,
+  ) async {
+    Player mediaPlayer = 
+        Player(
+          configuration: PlayerConfiguration(
+            // 默认缓存 5M 大小
+            bufferSize:
+                videoType.value == 'live' ? 32 * 1024 * 1024 : 5 * 1024 * 1024,
+          ),
+        );
+
+    var pp = mediaPlayer.platform as NativePlayer;
+    // 解除倍速限制
+    await pp.setProperty("af", "scaletempo2=max-speed=8");
+    //  音量不一致
+    if (Platform.isAndroid) {
+      await pp.setProperty("volume-max", "100");
+      await pp.setProperty("ao", "audiotrack,opensles");
+    }
+
+    await mediaPlayer.setAudioTrack(
+      AudioTrack.auto(),
+    );
+
+    // 音轨
+    if (dataSource.audioSource != '' && dataSource.audioSource != null) {
+      await pp.setProperty(
+        'audio-files',
+        UniversalPlatform.isWindows
+            ? dataSource.audioSource!.replaceAll(';', '\\;')
+            : dataSource.audioSource!.replaceAll(':', '\\:'),
+      );
+    } else {
+      await pp.setProperty(
+        'audio-files',
+        '',
+      );
+    }
+
+    // 字幕
+    if (dataSource.subFiles != '' && dataSource.subFiles != null) {
+      await pp.setProperty(
+        'sub-files',
+        UniversalPlatform.isWindows
+            ? dataSource.subFiles!.replaceAll(';', '\\;')
+            : dataSource.subFiles!.replaceAll(':', '\\:'),
+      );
+      await pp.setProperty("subs-with-matching-audio", "no");
+      await pp.setProperty("sub-forced-only", "yes");
+      await pp.setProperty("blend-subtitles", "video");
+    }
+
+    videoController = 
+        VideoController(
+          mediaPlayer,
+          configuration: VideoControllerConfiguration(
+            enableHardwareAcceleration: enableHA,
+            androidAttachSurfaceAfterVideoParameters: false,
+          ),
+        );
+
+    mediaPlayer.setPlaylistMode(looping);
+
+    if (dataSource.type == DataSourceType.asset) {
+      final assetUrl = dataSource.videoSource!.startsWith("asset://")
+          ? dataSource.videoSource!
+          : "asset://${dataSource.videoSource!}";
+      mediaPlayer.open(
+        Media(assetUrl, httpHeaders: dataSource.httpHeaders),
+        play: false,
+      );
+    }
+    mediaPlayer.open(
+      Media(dataSource.videoSource!, httpHeaders: dataSource.httpHeaders),
+      play: false,
+    );
+    // 音轨
+    // player.setAudioTrack(
+    //   AudioTrack.uri(dataSource.audioSource!),
+    // );
+
+    return mediaPlayer;
+  }
+
+  //获得视频详细
   Future queryVideoUrl() async {
     var result = await VideoRequest.videoUrl(cid: cid, bvid: bvid);
     if (result['status']) {
@@ -63,9 +267,9 @@ abstract class _PlayerController with Store {
         audioUrl = '';
         defaultST = Duration.zero;
         firstVideo = VideoItem();
-        if (autoPlay.value) {
-          await playerInit();
-          isShowCover.value = false;
+        if (autoPlay) {
+          init;
+          isShowCover = false;
         }
         return result;
       }
@@ -164,13 +368,13 @@ abstract class _PlayerController with Store {
         currentAudioQa = AudioQualityCode.fromCode(firstAudio.id!)!;
       }
       defaultST = Duration(milliseconds: data.lastPlayTime!);
-      if (autoPlay.value) {
-        await playerInit();
-        isShowCover.value = false;
+      if (autoPlay) {
+        init;
+        isShowCover = false;
       }
     } else {
       if (result['code'] == -404) {
-        isShowCover.value = false;
+        isShowCover = false;
       }
       SmartDialog.showToast(result['msg'].toString());
     }
