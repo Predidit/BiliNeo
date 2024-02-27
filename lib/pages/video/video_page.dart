@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:bilineo/pages/video/video_controller.dart';
+import 'package:bilineo/pages/player/player_item.dart';
 
 class VideoPage extends StatefulWidget {
   const VideoPage({super.key});
@@ -24,11 +25,16 @@ class _RatingPageState extends State<VideoPage> {
     return Scaffold(
       appBar: AppBar(title: const Text('BiliNeo Video Test Page')),
       body: Center(
-        child: TextButton(
-          onPressed: () {
-            
-          },
-          child: const Text('测试'),
+        child: Builder(
+          builder: (context) {
+            // return TextButton(
+            //   onPressed: () {
+                
+            //   },
+            //   child: const Text('测试'),
+            // );
+            return const PlayerItem();
+          }
         ),
       ),
     );

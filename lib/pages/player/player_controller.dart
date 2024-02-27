@@ -82,8 +82,9 @@ abstract class _PlayerController with Store {
   PlaylistMode looping = PlaylistMode.none;
 
   @action
-  void init(DataSource dataSource) async {
+  void init() {
     // mediaPlayer = await createVideoController(dataSource, looping, enableHA, width, height);
+    queryVideoUrl();
     setDataSource(DataSource(
         // Todo
         videoSource: videoUrl,

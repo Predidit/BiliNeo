@@ -6,6 +6,8 @@ import 'package:bilineo/bean/bangumi/bangumi_info.dart';
 import 'package:bilineo/pages/card/network_img_layer.dart';
 import 'package:bilineo/pages/card/pbadge.dart';
 import 'package:bilineo/request/bangumi.dart';
+import 'package:bilineo/pages/player/player_controller.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 
 // 视频卡片 - 垂直布局
 class BangumiCardV extends StatelessWidget {
@@ -23,6 +25,7 @@ class BangumiCardV extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String heroTag = Utils.makeHeroTag(bangumiItem.mediaId);
+    final PlayerController playerController = Modular.get<PlayerController>();
     return Card(
       elevation: 0,
       clipBehavior: Clip.hardEdge,
@@ -31,7 +34,7 @@ class BangumiCardV extends StatelessWidget {
         child: InkWell(
           onTap: () async {
             final int seasonId = bangumiItem.seasonId;
-            SmartDialog.showLoading(msg: '获取中...');
+            SmartDialog.showLoading(msg: '获取中...'); 
             final res = await BangumiHttp.bangumiInfo(seasonId: seasonId);
             SmartDialog.dismiss().then((value) {
               if (res['status']) {
@@ -53,6 +56,12 @@ class BangumiCardV extends StatelessWidget {
                 //     'bangumiItem': res['data'],
                 //   },
                 // );
+                playerController.bvid = bvid;
+                playerController.cid = cid;
+                playerController.pic = pic;
+                playerController.heroTag = heroTag;
+                playerController.init();
+                Modular.to.pushNamed('/tab/video/');
               }
             });
           },
