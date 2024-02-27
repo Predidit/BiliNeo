@@ -63,9 +63,10 @@ abstract class _PlayerController with Store {
   bool autoPlay = true;
   bool enableHA = true;
 
-  late bool enableCDN;
-  late int? cacheVideoQa;
-  late String cacheDecode;
+  // CDN优化 (Todo)
+  bool enableCDN = true;
+  int cacheVideoQa = 0;
+  String cacheDecode = VideoDecodeFormats.values.last.code;
   late int cacheAudioQa;
   late VideoQuality currentVideoQa;
   late VideoDecodeFormats currentDecodeFormats;
@@ -82,10 +83,12 @@ abstract class _PlayerController with Store {
   PlaylistMode looping = PlaylistMode.none;
 
   @action
-  void init() {
+  Future init() async {
     // mediaPlayer = await createVideoController(dataSource, looping, enableHA, width, height);
-    queryVideoUrl();
-    setDataSource(DataSource(
+    debugPrint('VideoURL开始初始化');
+    await queryVideoUrl();
+    debugPrint('VideoURL初始化成功 ${videoUrl}');
+    await setDataSource(DataSource(
         // Todo
         videoSource: videoUrl,
         audioSource: audioUrl,
@@ -257,9 +260,12 @@ abstract class _PlayerController with Store {
   //获得视频详细
   Future queryVideoUrl() async {
     var result = await VideoRequest.videoUrl(cid: cid, bvid: bvid);
+    debugPrint('已从服务器得到响应');
     if (result['status']) {
       data = result['data'];
+      debugPrint('响应合法');
       if (data.acceptDesc!.isNotEmpty && data.acceptDesc!.contains('试看')) {
+        debugPrint('目标资源只能试看');
         SmartDialog.showToast(
           '该视频为专属视频，仅提供试看',
           displayTime: const Duration(seconds: 3),
@@ -268,20 +274,29 @@ abstract class _PlayerController with Store {
         audioUrl = '';
         defaultST = Duration.zero;
         firstVideo = VideoItem();
-        if (autoPlay) {
-          init;
-          isShowCover = false;
-        }
+        // if (autoPlay) {
+        //   init;
+        //   isShowCover = false;
+        // }
         return result;
       }
+      debugPrint('视频非试看');
       final List<VideoItem> allVideosList = data.dash!.video!;
+      debugPrint('获取视频列表正常');
       try {
         // 当前可播放的最高质量视频
         int currentHighVideoQa = allVideosList.first.quality!.code;
+        debugPrint('当前可用最高画质为 ${currentHighVideoQa}');
         // 预设的画质为null，则当前可用的最高质量
-        cacheVideoQa ??= currentHighVideoQa;
+        if (cacheVideoQa == 0) {
+          debugPrint('预设画质为 Null');
+          cacheVideoQa = currentHighVideoQa;
+          debugPrint('画质已设置为当前最高质量');
+        }
+        //cacheVideoQa ??= currentHighVideoQa;
         int resVideoQa = currentHighVideoQa;
         if (cacheVideoQa! <= currentHighVideoQa) {
+          debugPrint('预设画质低于当前最高');
           // 如果预设的画质低于当前最高
           final List<int> numbers = data.acceptQuality!
               .where((e) => e <= currentHighVideoQa)
@@ -289,6 +304,8 @@ abstract class _PlayerController with Store {
           resVideoQa = Utils.findClosestNumber(cacheVideoQa!, numbers);
         }
         currentVideoQa = VideoQualityCode.fromCode(resVideoQa)!;
+
+      debugPrint('检查点一');
 
         /// 取出符合当前画质的videoList
         final List<VideoItem> videosList =
@@ -316,6 +333,8 @@ abstract class _PlayerController with Store {
           SmartDialog.showToast('DecodeFormats error: $err');
         }
 
+        debugPrint('检查点二');
+
         /// 取出符合当前解码格式的videoItem
         try {
           firstVideo = videosList.firstWhere(
@@ -323,10 +342,12 @@ abstract class _PlayerController with Store {
         } catch (_) {
           firstVideo = videosList.first;
         }
+        debugPrint('获取资源中，非试看');
         videoUrl = enableCDN
-            ? VideoUtils.getCdnUrl(firstVideo)
+            ? VideoUtils.getCdnUrl(firstVideo) 
             : (firstVideo.backupUrl ?? firstVideo.baseUrl!);
       } catch (err) {
+        debugPrint('获取第一个视频错误： $err');
         SmartDialog.showToast('firstVideo error: $err');
       }
 

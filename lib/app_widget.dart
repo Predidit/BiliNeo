@@ -1,4 +1,4 @@
-import 'package:asuka/asuka.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -14,7 +14,7 @@ class _AppWidgetState extends State<AppWidget> {
   @override
   Widget build(BuildContext context) {
     var app = MaterialApp.router(
-      title: "Mastodon for Flutter",
+      title: "BiliNeo",
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
       supportedLocales: const [Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans', countryCode: "CN")],
       locale: const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans', countryCode: "CN"),
@@ -23,10 +23,10 @@ class _AppWidgetState extends State<AppWidget> {
         primarySwatch: Colors.purple,
       ),
       routerConfig: Modular.routerConfig,
-      builder: Asuka.builder,
+      builder: FlutterSmartDialog.init(),
       // navigatorObservers: [Asuka.asukaHeroController],
     );
-    Modular.setObservers([Asuka.asukaHeroController]);
+    Modular.setObservers([FlutterSmartDialog.observer]);
     return app;
   }
 }

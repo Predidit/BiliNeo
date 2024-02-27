@@ -200,18 +200,12 @@ mixin _$PlayerController on _PlayerController, Store {
     });
   }
 
-  late final _$_PlayerControllerActionController =
-      ActionController(name: '_PlayerController', context: context);
+  late final _$initAsyncAction =
+      AsyncAction('_PlayerController.init', context: context);
 
   @override
-  void init() {
-    final _$actionInfo = _$_PlayerControllerActionController.startAction(
-        name: '_PlayerController.init');
-    try {
-      return super.init();
-    } finally {
-      _$_PlayerControllerActionController.endAction(_$actionInfo);
-    }
+  Future<dynamic> init() {
+    return _$initAsyncAction.run(() => super.init());
   }
 
   @override

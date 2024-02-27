@@ -36,7 +36,7 @@ class BangumiCardV extends StatelessWidget {
             final int seasonId = bangumiItem.seasonId;
             SmartDialog.showLoading(msg: '获取中...'); 
             final res = await BangumiHttp.bangumiInfo(seasonId: seasonId);
-            SmartDialog.dismiss().then((value) {
+            SmartDialog.dismiss().then((value) async {
               if (res['status']) {
                 if (res['data'].episodes.isEmpty) {
                   SmartDialog.showToast('资源加载失败');
@@ -60,7 +60,7 @@ class BangumiCardV extends StatelessWidget {
                 playerController.cid = cid;
                 playerController.pic = pic;
                 playerController.heroTag = heroTag;
-                playerController.init();
+                await playerController.init();
                 Modular.to.pushNamed('/tab/video/');
               }
             });
