@@ -180,6 +180,27 @@ mixin _$PlayerController on _PlayerController, Store {
     });
   }
 
+  late final _$videoControllerAtom =
+      Atom(name: '_PlayerController.videoController', context: context);
+
+  @override
+  VideoController get videoController {
+    _$videoControllerAtom.reportRead();
+    return super.videoController;
+  }
+
+  bool _videoControllerIsInitialized = false;
+
+  @override
+  set videoController(VideoController value) {
+    _$videoControllerAtom.reportWrite(
+        value, _videoControllerIsInitialized ? super.videoController : null,
+        () {
+      super.videoController = value;
+      _videoControllerIsInitialized = true;
+    });
+  }
+
   late final _$dataStatusAtom =
       Atom(name: '_PlayerController.dataStatus', context: context);
 
@@ -220,6 +241,7 @@ videoType: ${videoType},
 bangumiItem: ${bangumiItem},
 isShowCover: ${isShowCover},
 direction: ${direction},
+videoController: ${videoController},
 dataStatus: ${dataStatus}
     ''';
   }

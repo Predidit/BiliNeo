@@ -58,6 +58,8 @@ abstract class _PlayerController with Store {
   late Duration defaultST;
 
   late Player mediaPlayer;
+
+  @observable
   late VideoController videoController;
 
   bool autoPlay = true;
@@ -76,7 +78,10 @@ abstract class _PlayerController with Store {
   @observable
   late String dataStatus;
 
-  //播放器尺寸
+  // 资源类型 (Todo)
+  // SearchType videoType = SearchType.media_bangumi;
+
+  // 播放器尺寸
   late double width;
   late double height;
 
@@ -87,7 +92,6 @@ abstract class _PlayerController with Store {
     // mediaPlayer = await createVideoController(dataSource, looping, enableHA, width, height);
     debugPrint('VideoURL开始初始化');
     await queryVideoUrl();
-    debugPrint('VideoURL初始化成功 ${videoUrl}');
     await setDataSource(DataSource(
         // Todo
         videoSource: videoUrl,
@@ -104,6 +108,7 @@ abstract class _PlayerController with Store {
       bvidS: bvid,
       cidS: cid,
       autoplayS: autoPlay,);
+      debugPrint('VideoURL初始化成功 ${videoUrl}');
   }
 
   //初始化资源
@@ -139,18 +144,18 @@ abstract class _PlayerController with Store {
       // 初始化数据加载状态
       dataStatus = 'loading';
       // 初始化全屏方向
-      direction = direction ?? 'horizontal';
+      direction = directionS ?? 'horizontal';
       width = widthS ?? 600;
       height = heightS ?? 300;
       bvid = bvidS;
       cid = cidS;
 
-      if (mediaPlayer != null &&
-          mediaPlayer!.state.playing) {
-        mediaPlayer.pause();
-        dataStatus = 'paused';
-        debugPrint('播放暂停');
-      }
+      // if (mediaPlayer != null &&
+      //     mediaPlayer!.state.playing) {
+      //   mediaPlayer.pause();
+      //   dataStatus = 'paused';
+      //   debugPrint('播放暂停');
+      // }
       // 配置Player 音轨、字幕等等
       mediaPlayer = await createVideoController(
           dataSource, looping, enableHA, width, height);
@@ -163,7 +168,7 @@ abstract class _PlayerController with Store {
       debugPrint('视频加载完成');
     } catch (err) {
       dataStatus = 'error';
-      print('plPlayer err:  $err');
+      print('检查点三错误:  $err');
     }
   }
 
@@ -180,7 +185,7 @@ abstract class _PlayerController with Store {
           configuration: PlayerConfiguration(
             // 默认缓存 5M 大小
             bufferSize:
-                videoType.value == 'live' ? 32 * 1024 * 1024 : 5 * 1024 * 1024,
+                videoType == 'live' ? 32 * 1024 * 1024 : 5 * 1024 * 1024,   //panic
           ),
         );
 
@@ -233,6 +238,7 @@ abstract class _PlayerController with Store {
             androidAttachSurfaceAfterVideoParameters: false,
           ),
         );
+    debugPrint('videoController 配置成功');
 
     mediaPlayer.setPlaylistMode(looping);
 

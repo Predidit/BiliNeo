@@ -6,8 +6,8 @@ import 'package:flutter_modular/flutter_modular.dart';
 class VideoModule extends Module {
   @override
   void binds(i) {
-    i.addSingleton(VideoController.new);
-    i.addSingleton(PlayerController.new);
+    //i.addSingleton(VideoController.new);
+    //i.addSingleton(PlayerController.new);
   }
 
   @override

@@ -12,7 +12,7 @@ class VideoPage extends StatefulWidget {
 
 class _RatingPageState extends State<VideoPage> {
 
-  final VideoController videoController = Modular.get<VideoController>();
+  // final VideoController videoController = Modular.get<VideoController>();
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +33,7 @@ class _RatingPageState extends State<VideoPage> {
             //   },
             //   child: const Text('测试'),
             // );
+            debugPrint('跳转到播放器');
             return const PlayerItem();
           }
         ),

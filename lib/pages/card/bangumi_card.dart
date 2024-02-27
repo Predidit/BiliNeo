@@ -8,6 +8,7 @@ import 'package:bilineo/pages/card/pbadge.dart';
 import 'package:bilineo/request/bangumi.dart';
 import 'package:bilineo/pages/player/player_controller.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:bilineo/pages/player/search_type.dart';
 
 // 视频卡片 - 垂直布局
 class BangumiCardV extends StatelessWidget {
@@ -60,6 +61,7 @@ class BangumiCardV extends StatelessWidget {
                 playerController.cid = cid;
                 playerController.pic = pic;
                 playerController.heroTag = heroTag;
+                playerController.videoType = SearchType.media_bangumi;
                 await playerController.init();
                 Modular.to.pushNamed('/tab/video/');
               }

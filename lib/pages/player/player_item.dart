@@ -1,5 +1,6 @@
 import 'package:bilineo/pages/player/player_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -12,14 +13,13 @@ class PlayerItem extends StatefulWidget {
 }
 
 class _PlayerItemState extends State<PlayerItem> {
-  // late final player = Player();
-  // late final playerController = VideoController(player) ;
-  // late final controller = Modular.get<PlayerController>().mediaPlayer;
-  late final videoController = Modular.get<PlayerController>().videoController;
+  final PlayerController playerController = Modular.get<PlayerController>();
 
   @override
   void initState() {
     super.initState();
+    // debugPrint('在小部件中初始化');
+    // playerController.init;
   }
 
   @override
@@ -30,13 +30,18 @@ class _PlayerItemState extends State<PlayerItem> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('播放器获取到的bv是 ${playerController.bvid}');
     return Row(
       children: [
         const Text('Video Player Test'),
-        SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.width * 9.0 / 16.0,
-          child: Video(controller: videoController),
+        Observer(
+          builder: (context) {
+            return SizedBox(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.width * 9.0 / 16.0,
+              child: Video(controller: playerController.videoController),
+            );
+          }
         ),
       ],
     );
