@@ -4,6 +4,7 @@ import 'package:bilineo/pages/router.dart';
 import 'package:bilineo/pages/init_page.dart';
 import 'package:flutter/material.dart';
 import 'package:bilineo/pages/popular/popular_controller.dart';
+import 'package:bilineo/pages/video/video_controller.dart';
 import 'package:bilineo/pages/player/player_controller.dart';
 
 class IndexModule extends Module {
@@ -13,7 +14,8 @@ class IndexModule extends Module {
   @override
   void binds(i) {
     i.addSingleton(PopularController.new);
-    i.addSingleton(PlayerController.new);
+    i.addSingleton(VideoController.new);
+    // i.addSingleton(PlayerController.new);
   }
 
   @override

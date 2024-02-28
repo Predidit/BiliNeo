@@ -7,7 +7,7 @@ class VideoModule extends Module {
   @override
   void binds(i) {
     //i.addSingleton(VideoController.new);
-    //i.addSingleton(PlayerController.new);
+    i.addSingleton(PlayerController.new);
   }
 
   @override

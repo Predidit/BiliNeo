@@ -1,3 +1,4 @@
+import 'package:bilineo/pages/player/player_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:bilineo/pages/video/video_controller.dart';
@@ -12,7 +13,8 @@ class VideoPage extends StatefulWidget {
 
 class _RatingPageState extends State<VideoPage> {
 
-  // final VideoController videoController = Modular.get<VideoController>();
+  final VideoController videoController = Modular.get<VideoController>();
+  final PlayerController playerController = Modular.get<PlayerController>();
 
   @override
   Widget build(BuildContext context) {
@@ -25,17 +27,17 @@ class _RatingPageState extends State<VideoPage> {
     return Scaffold(
       appBar: AppBar(title: const Text('BiliNeo Video Test Page')),
       body: Center(
-        child: Builder(
-          builder: (context) {
-            // return TextButton(
-            //   onPressed: () {
-                
-            //   },
-            //   child: const Text('测试'),
-            // );
-            debugPrint('跳转到播放器');
-            return const PlayerItem();
-          }
+        child: FutureBuilder<String>(
+          future: videoController.init(playerController),
+          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('发生错误: ${snapshot.error}'));
+            } else {
+              return const PlayerItem();
+            }
+          },
         ),
       ),
     );

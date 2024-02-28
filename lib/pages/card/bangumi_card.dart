@@ -7,6 +7,7 @@ import 'package:bilineo/pages/card/network_img_layer.dart';
 import 'package:bilineo/pages/card/pbadge.dart';
 import 'package:bilineo/request/bangumi.dart';
 import 'package:bilineo/pages/player/player_controller.dart';
+import 'package:bilineo/pages/video/video_controller.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:bilineo/pages/player/search_type.dart';
 
@@ -26,7 +27,8 @@ class BangumiCardV extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String heroTag = Utils.makeHeroTag(bangumiItem.mediaId);
-    final PlayerController playerController = Modular.get<PlayerController>();
+    final VideoController videoController = Modular.get<VideoController>();
+    // final PlayerController playerController = Modular.get<PlayerController>();
     return Card(
       elevation: 0,
       clipBehavior: Clip.hardEdge,
@@ -57,12 +59,12 @@ class BangumiCardV extends StatelessWidget {
                 //     'bangumiItem': res['data'],
                 //   },
                 // );
-                playerController.bvid = bvid;
-                playerController.cid = cid;
-                playerController.pic = pic;
-                playerController.heroTag = heroTag;
-                playerController.videoType = SearchType.media_bangumi;
-                await playerController.init();
+                videoController.bvid = bvid; 
+                videoController.cid = cid;
+                videoController.pic = pic;
+                videoController.heroTag = heroTag;
+                videoController.videoType = SearchType.media_bangumi;
+                // await videoController.init();
                 Modular.to.pushNamed('/tab/video/');
               }
             });

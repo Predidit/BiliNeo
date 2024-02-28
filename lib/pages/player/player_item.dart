@@ -31,7 +31,7 @@ class _PlayerItemState extends State<PlayerItem> {
   @override
   Widget build(BuildContext context) {
     debugPrint('播放器获取到的bv是 ${playerController.bvid}');
-    return Row(
+    return Column(
       children: [
         const Text('Video Player Test'),
         Observer(
