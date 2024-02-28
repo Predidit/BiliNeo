@@ -46,6 +46,9 @@ abstract class _VideoController with Store {
     // 重新获取视频资源
     bvid = bvidS;
     cid = cidS;
+    playerController.bvid = bvidS;
+    playerController.cid = cidS;
     await playerController.init();
+    debugPrint('PlayController 重新初始化成功');
   }
 }

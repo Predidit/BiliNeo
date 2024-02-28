@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:bilineo/pages/player/player_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -16,19 +17,19 @@ class VideoPage extends StatefulWidget {
 }
 
 class _RatingPageState extends State<VideoPage> {
-  late final BangumiInfoModel? bangumiItem;
+  // late final BangumiInfoModel? bangumiItem;
   final VideoController videoController = Modular.get<VideoController>();
   final PlayerController playerController = Modular.get<PlayerController>();
 
   @override
   void dispose() {
-    playerController.dispose();
+    // playerController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    bangumiItem = videoController.bangumiItem;
+    final bangumiItem = videoController.bangumiItem;
     final navigationBarState = Provider.of<NavigationBarState>(context);
     double sheetHeight = MediaQuery.sizeOf(context).height -
         MediaQuery.of(context).padding.top -
@@ -56,7 +57,17 @@ class _RatingPageState extends State<VideoPage> {
           future: videoController.init(playerController),
           builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
+              return Center(child: SizedBox(
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                    height: Platform.isWindows
+                        ? MediaQuery.of(context).size.width * 9.0 / 32.0
+                        : MediaQuery.of(context).size.width * 9.0 / 16.0,
+                    width: Platform.isWindows
+                        ? MediaQuery.of(context).size.width / 2
+                        : MediaQuery.of(context).size.width,
+                  ),);
             } else if (snapshot.hasError) {
               return Center(child: Text('发生错误: ${snapshot.error}'));
             } else {

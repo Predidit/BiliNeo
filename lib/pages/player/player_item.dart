@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bilineo/pages/player/player_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -34,16 +36,30 @@ class _PlayerItemState extends State<PlayerItem> {
     return Column(
       children: [
         // const Text('Video Player Test'),
-        Observer(
-          builder: (context) {
-            return SizedBox(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.width * 9.0 / 16.0,
-              child: Video(controller: playerController.videoController),
-            );
-          }
-        ),
+        Observer(builder: (context) {
+          return SizedBox(
+            width: Platform.isWindows
+                ? MediaQuery.of(context).size.width / 2
+                : MediaQuery.of(context).size.width,
+            height: Platform.isWindows
+                ? MediaQuery.of(context).size.width * 9.0 / 32.0
+                : MediaQuery.of(context).size.width * 9.0 / 16.0,
+            child: playerController.dataStatus == 'loaded'
+                ? Video(controller: playerController.videoController)
+                : SizedBox(
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                    height: Platform.isWindows
+                        ? MediaQuery.of(context).size.width * 9.0 / 32.0
+                        : MediaQuery.of(context).size.width * 9.0 / 16.0,
+                    width: Platform.isWindows
+                        ? MediaQuery.of(context).size.width / 2
+                        : MediaQuery.of(context).size.width,
+                  ),
+          );
+        }),
       ],
     );
   }
-} 
+}

@@ -90,6 +90,13 @@ abstract class _PlayerController with Store {
   @action
   Future init() async {
     // mediaPlayer = await createVideoController(dataSource, looping, enableHA, width, height);
+    dataStatus = 'loading';
+    try {
+      mediaPlayer.dispose();
+      debugPrint('成功销毁已经存在的 player');
+    } catch (e) {
+      debugPrint('未找到已经存在的 player');
+    }
     debugPrint('VideoURL开始初始化');
     await queryVideoUrl();
     await setDataSource(DataSource(
@@ -108,11 +115,20 @@ abstract class _PlayerController with Store {
       bvidS: bvid,
       cidS: cid,
       autoplayS: autoPlay,);
+      debugPrint('正在播放的bv是 $bvid');
+      debugPrint('正在播放的cid是 $cid');
       debugPrint('VideoURL初始化成功 ${videoUrl}');
+      dataStatus = 'loaded';
   }
 
   void dispose() {
-    mediaPlayer.dispose();
+    // mediaPlayer.dispose();
+    try {
+      mediaPlayer.dispose();
+      debugPrint('捕获到一个逃掉的 player');
+    } catch (e) {
+      debugPrint('没有捕获到漏掉的 player');
+    }
   }
 
   //初始化资源
@@ -146,7 +162,6 @@ abstract class _PlayerController with Store {
       // 初始化视频倍速
       // _playbackSpeed.value = speed;
       // 初始化数据加载状态
-      dataStatus = 'loading';
       // 初始化全屏方向
       direction = directionS ?? 'horizontal';
       width = widthS ?? 600;
@@ -168,7 +183,6 @@ abstract class _PlayerController with Store {
       // 记录播放时间以待下次播放 (Todo)
 
       // 数据加载完成
-      dataStatus = 'loaded';
       debugPrint('视频加载完成');
     } catch (err) {
       dataStatus = 'error';
@@ -184,7 +198,7 @@ abstract class _PlayerController with Store {
     double? width,
     double? height,
   ) async {
-    Player mediaPlayer = 
+    mediaPlayer = 
         Player(
           configuration: PlayerConfiguration(
             // 默认缓存 5M 大小

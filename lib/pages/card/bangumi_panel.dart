@@ -21,7 +21,7 @@ class BangumiPanel extends StatefulWidget {
 }
 
 class _BangumiPanelState extends State<BangumiPanel> {
-  late int currentIndex;
+  int currentIndex =0;
   final ScrollController listViewScrollCtr = ScrollController();
 
   // Todo 大会员相关
