@@ -3,6 +3,7 @@ import 'package:mobx/mobx.dart';
 import 'package:bilineo/pages/player/search_type.dart';
 import 'package:bilineo/pages/player/player_controller.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:bilineo/bean/bangumi/bangumi_info.dart';
 
 part 'video_controller.g.dart';
 
@@ -24,6 +25,9 @@ abstract class _VideoController with Store {
   @observable
   late dynamic videoType;
 
+  @observable
+  late BangumiInfoModel? bangumiItem;
+
   // final PlayerController playerController = Modular.get<PlayerController>();
 
   Future<String> init(PlayerController playerController) async {
@@ -35,5 +39,13 @@ abstract class _VideoController with Store {
     await playerController.init();
     debugPrint('PlayerContriller 初始化成功');
     return 'PlayerContriller Init Success';
+  }
+
+  // 修改分P或番剧分集
+  Future changeSeasonOrbangu(bvidS, cidS, PlayerController playerController) async {
+    // 重新获取视频资源
+    bvid = bvidS;
+    cid = cidS;
+    await playerController.init();
   }
 }

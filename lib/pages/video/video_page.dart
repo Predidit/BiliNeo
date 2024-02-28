@@ -5,6 +5,8 @@ import 'package:bilineo/pages/video/video_controller.dart';
 import 'package:bilineo/pages/player/player_item.dart';
 import 'package:provider/provider.dart';
 import 'package:bilineo/pages/menu/menu.dart';
+import 'package:bilineo/bean/bangumi/bangumi_info.dart';
+import 'package:bilineo/pages/card/bangumi_panel.dart';
 
 class VideoPage extends StatefulWidget {
   const VideoPage({super.key});
@@ -14,7 +16,7 @@ class VideoPage extends StatefulWidget {
 }
 
 class _RatingPageState extends State<VideoPage> {
-
+  late final BangumiInfoModel? bangumiItem;
   final VideoController videoController = Modular.get<VideoController>();
   final PlayerController playerController = Modular.get<PlayerController>();
 
@@ -26,7 +28,11 @@ class _RatingPageState extends State<VideoPage> {
 
   @override
   Widget build(BuildContext context) {
+    bangumiItem = videoController.bangumiItem;
     final navigationBarState = Provider.of<NavigationBarState>(context);
+    double sheetHeight = MediaQuery.sizeOf(context).height -
+        MediaQuery.of(context).padding.top -
+        MediaQuery.sizeOf(context).width * 9 / 16;
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -36,7 +42,7 @@ class _RatingPageState extends State<VideoPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('BiliNeo Video Test Page'),
-         leading: IconButton(
+        leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
             navigationBarState.showNavigate();
@@ -44,9 +50,9 @@ class _RatingPageState extends State<VideoPage> {
             //Modular.to.pop();
           },
         ),
-        ),     
-      body: Center(
-        child: FutureBuilder<String>(
+      ),
+      body: Column(children: <Widget>[
+        FutureBuilder<String>(
           future: videoController.init(playerController),
           builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -58,7 +64,19 @@ class _RatingPageState extends State<VideoPage> {
             }
           },
         ),
-      ),
+
+        // Todo
+        BangumiPanel(
+          // pages: bangumiItem != null
+          //     ? bangumiItem!.episodes!
+          //     : widget.bangumiDetail!.episodes!,
+          pages: bangumiItem!.episodes!,
+          cid: videoController.cid,
+          sheetHeight: sheetHeight,
+          changeFuc: (bvidS, cidS) =>
+              videoController.changeSeasonOrbangu(bvidS, cidS, playerController),
+        )
+      ]),
     );
   }
 }

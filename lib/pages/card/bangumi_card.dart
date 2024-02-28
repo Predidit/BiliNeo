@@ -67,6 +67,7 @@ class BangumiCardV extends StatelessWidget {
                 videoController.pic = pic;
                 videoController.heroTag = heroTag;
                 videoController.videoType = SearchType.media_bangumi;
+                videoController.bangumiItem = res['data'];
                 // await videoController.init();
                 navigationBarState.hideNavigate();
                 Modular.to.navigate('/tab/video/');
