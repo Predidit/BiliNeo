@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:bilineo/pages/video/video_controller.dart';
 import 'package:bilineo/pages/player/player_item.dart';
+import 'package:provider/provider.dart';
+import 'package:bilineo/pages/menu/menu.dart';
 
 class VideoPage extends StatefulWidget {
   const VideoPage({super.key});
@@ -17,7 +19,14 @@ class _RatingPageState extends State<VideoPage> {
   final PlayerController playerController = Modular.get<PlayerController>();
 
   @override
+  void dispose() {
+    playerController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final navigationBarState = Provider.of<NavigationBarState>(context);
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -25,7 +34,17 @@ class _RatingPageState extends State<VideoPage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(title: const Text('BiliNeo Video Test Page')),
+      appBar: AppBar(
+        title: const Text('BiliNeo Video Test Page'),
+         leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            navigationBarState.showNavigate();
+            Modular.to.navigate('/tab/popular');
+            //Modular.to.pop();
+          },
+        ),
+        ),     
       body: Center(
         child: FutureBuilder<String>(
           future: videoController.init(playerController),

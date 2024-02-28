@@ -11,11 +11,23 @@ class BottomMenu extends StatefulWidget {
 
 class NavigationBarState extends ChangeNotifier {
   int _selectedIndex = 0;
+  bool _isHide = false;
 
   int get selectedIndex => _selectedIndex;
+  bool get isHide => _isHide;
 
   void updateSelectedIndex(int pageIndex) {
     _selectedIndex = pageIndex;
+    notifyListeners();
+  }
+
+  void hideNavigate() {
+    _isHide = true;
+    notifyListeners();
+  }
+
+  void showNavigate() {
+    _isHide = false;
     notifyListeners();
   }
 }
@@ -41,7 +53,7 @@ class _BottomMenu extends State<BottomMenu> {
       ),
       bottomNavigationBar: Consumer<NavigationBarState>(
         builder: (context, state, child) {
-          return NavigationBar(
+          return state.isHide ? const SizedBox(height: 0) : NavigationBar(
             destinations: const <Widget>[
               NavigationDestination(
                 selectedIcon: Icon(Icons.home),

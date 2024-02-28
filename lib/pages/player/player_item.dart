@@ -33,7 +33,7 @@ class _PlayerItemState extends State<PlayerItem> {
     debugPrint('播放器获取到的bv是 ${playerController.bvid}');
     return Column(
       children: [
-        const Text('Video Player Test'),
+        // const Text('Video Player Test'),
         Observer(
           builder: (context) {
             return SizedBox(

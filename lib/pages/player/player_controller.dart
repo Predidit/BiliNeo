@@ -111,6 +111,10 @@ abstract class _PlayerController with Store {
       debugPrint('VideoURL初始化成功 ${videoUrl}');
   }
 
+  void dispose() {
+    mediaPlayer.dispose();
+  }
+
   //初始化资源
   Future<void> setDataSource(
     DataSource dataSource, {

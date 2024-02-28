@@ -10,6 +10,8 @@ import 'package:bilineo/pages/player/player_controller.dart';
 import 'package:bilineo/pages/video/video_controller.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:bilineo/pages/player/search_type.dart';
+import 'package:bilineo/pages/menu/menu.dart';
+import 'package:provider/provider.dart';
 
 // 视频卡片 - 垂直布局
 class BangumiCardV extends StatelessWidget {
@@ -29,6 +31,7 @@ class BangumiCardV extends StatelessWidget {
     String heroTag = Utils.makeHeroTag(bangumiItem.mediaId);
     final VideoController videoController = Modular.get<VideoController>();
     // final PlayerController playerController = Modular.get<PlayerController>();
+    final navigationBarState = Provider.of<NavigationBarState>(context);
     return Card(
       elevation: 0,
       clipBehavior: Clip.hardEdge,
@@ -65,7 +68,8 @@ class BangumiCardV extends StatelessWidget {
                 videoController.heroTag = heroTag;
                 videoController.videoType = SearchType.media_bangumi;
                 // await videoController.init();
-                Modular.to.pushNamed('/tab/video/');
+                navigationBarState.hideNavigate();
+                Modular.to.navigate('/tab/video/');
               }
             });
           },
