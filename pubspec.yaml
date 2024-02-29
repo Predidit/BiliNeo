@@ -59,6 +59,8 @@ dependencies:
   media_kit_libs_video: ^1.0.4                   # Native video dependencies.
 
   universal_platform: ^1.0.0+1
+  webview_cookie_manager: ^2.0.6
+  webview_flutter: ^4.2.2
 
 dev_dependencies:
   flutter_test:

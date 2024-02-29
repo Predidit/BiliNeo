@@ -24,9 +24,9 @@ class _MyPageState extends State<MyPage> {
             height: 85,
             color: Theme.of(context).colorScheme.onInverseSurface,
             child: Center(
-              child: _mineController.userInfo.value.face != null
+              child: _mineController.userInfo.face != null
                   ? NetworkImgLayer(
-                      src: _mineController.userInfo.value.face,
+                      src: _mineController.userInfo.face,
                       width: 85,
                       height: 85)
                   : Image.asset('assets/images/noface.jpeg'),
@@ -39,12 +39,12 @@ class _MyPageState extends State<MyPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            _mineController.userInfo.value.uname ?? '点击头像登录',
+            _mineController.userInfo.uname ?? '点击头像登录',
             style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(width: 4),
           Image.asset(
-            'assets/images/lv/lv${_mineController.userInfo.value.levelInfo != null ? _mineController.userInfo.value.levelInfo!.currentLevel : '0'}.png',
+            'assets/images/lv/lv${_mineController.userInfo.levelInfo != null ? _mineController.userInfo.levelInfo!.currentLevel : '0'}.png',
             height: 10,
           ),
         ],

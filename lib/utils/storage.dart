@@ -2,14 +2,25 @@ import 'dart:io';
 
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:bilineo/pages/my/user_info.dart';
 
 class GStorage {
   static late final Box<dynamic> localCache;
+  static late final Box<dynamic> userInfo;
 
   static Future<void> init() async {
     final Directory dir = await getApplicationSupportDirectory();
     final String path = dir.path;
     await Hive.initFlutter('$path/hive');
+    regAdapter();
+    // Todo 登录用户信息
+    userInfo = await Hive.openBox(
+      'userInfo',
+      compactionStrategy: (int entries, int deletedEntries) {
+        return deletedEntries > 2;
+      },
+    );
+
     // 本地缓存
     localCache = await Hive.openBox(
       'localCache',
@@ -17,6 +28,12 @@ class GStorage {
         return deletedEntries > 4;
       },
     );
+  }
+
+  // Todo 所有者相关
+  static void regAdapter() {
+    Hive.registerAdapter(UserInfoDataAdapter());
+    Hive.registerAdapter(LevelInfoAdapter());
   }
 }
 
