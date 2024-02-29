@@ -1,10 +1,12 @@
 import 'package:bilineo/pages/my/my_page.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+// import 'package:bilineo/pages/webview/webview_controller.dart';
 // import 'package:bilineo/pages/my/my_controller.dart';
 
 class MyModule extends Module {
   @override
   void binds(i) {
+    // i.addSingleton(WebviewController.new);
     // i.addSingleton(MyController.new);
   }
 

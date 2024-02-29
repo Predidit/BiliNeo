@@ -5,19 +5,25 @@ import 'package:mobx/mobx.dart';
 import 'package:bilineo/pages/my/user_info.dart';
 import 'package:bilineo/utils/storage.dart';
 import 'package:hive/hive.dart';
+import 'package:bilineo/pages/webview/webview_controller.dart';
+// import 'package:webview_flutter/webview_flutter.dart';
 
 part 'my_controller.g.dart';
 
 class MyController = _MyController with _$MyController;
 
 abstract class _MyController with Store {
-  @observable
+
   final userInfo = Modular.get<UserInfoData>();
 
   @observable
   bool userLogin = false;
 
+  @observable
+  String userFace = '';
+
   Box userInfoCache = GStorage.userInfo;
+  final webController = Modular.get<WebviewController>();
   // Todo 设置相关
   // Box setting = GStorage.setting;
 
@@ -31,15 +37,19 @@ abstract class _MyController with Store {
 
   onLogin() async {
     if (!userLogin) {
-      Get.toNamed(
-        '/webview',
-        parameters: {
-          'url': 'https://passport.bilibili.com/h5-app/passport/login',
-          'type': 'login',
-          'pageTitle': '登录bilibili',
-        },
-      );
-      // Get.toNamed('/loginPage');
+      webController.url = 'https://passport.bilibili.com/h5-app/passport/login';
+      webController.type = 'login';
+      webController.pageTitle = '登录bilibili';
+      webController.init();
+      Modular.to.pushNamed('/tab/webview/');
     } 
+  }
+
+  void updateLoginStatus(val) async {
+    userInfo.init(userInfoCache.get('userInfoCache'));
+    userLogin = val ?? false;
+    if (val) return; 
+    //// 头像相关
+    // userFace.value = userInfo != null ? userInfo.face : '';
   }
 }

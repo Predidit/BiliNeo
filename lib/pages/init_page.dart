@@ -22,7 +22,7 @@ class _InitPageState extends State<InitPage> {
   }
 
   _init() {
-    Modular.to.navigate('/tab/popular');
+    Modular.to.navigate('/tab/popular/');
   }
 
   @override

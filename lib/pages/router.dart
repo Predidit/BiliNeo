@@ -3,6 +3,7 @@ import 'package:bilineo/pages/rating/rating_module.dart';
 import 'package:bilineo/pages/popular/popular_module.dart';
 import 'package:bilineo/pages/video/video_module.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:bilineo/pages/webview/webview_module.dart';
  
 class MenuRouteItem {
   final String path;
@@ -50,5 +51,9 @@ final MenuRoute menu = MenuRoute([
   MenuRouteItem(
     path: "/video",
     module: VideoModule(),
+  ),
+  MenuRouteItem(
+    path: '/webview',
+    module: WebviewMoudle(),
   ),
 ]);

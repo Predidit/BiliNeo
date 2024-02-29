@@ -3,7 +3,12 @@ import 'package:bilineo/pages/webview/webview_page.dart';
 
 class WebviewMoudle extends Module {
   @override
-  void routers(r) {
-    r.child('/', child: (_) => const WebviewPage);
+  void binds(i) {
+    // i.addSingleton();
+  }
+
+  @override
+  void routes(r) {
+    r.child('/', child: (_) => const WebviewPage());
   }
 }

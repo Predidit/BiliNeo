@@ -8,6 +8,7 @@ import 'package:bilineo/pages/video/video_controller.dart';
 import 'package:bilineo/pages/player/player_controller.dart';
 import 'package:bilineo/pages/my/my_controller.dart';
 import 'package:bilineo/pages/my/user_info.dart';
+import 'package:bilineo/pages/webview/webview_controller.dart';
 
 class IndexModule extends Module {
   @override
@@ -19,6 +20,7 @@ class IndexModule extends Module {
     i.addSingleton(VideoController.new);
     i.addSingleton(MyController.new);
     i.addSingleton(UserInfoData.new);
+    i.addSingleton(WebviewController.new);
     // i.addSingleton(PlayerController.new);
   }
 
