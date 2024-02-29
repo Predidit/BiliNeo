@@ -26,6 +26,8 @@ class Request {
   late String systemProxyPort;
   static final RegExp spmPrefixExp = RegExp(r'<meta name="spm_prefix" content="([^"]+?)">');
 
+  // Todo 大会员相关
+
   // 从cookie中获取 csrf token
   static Future<String> getCsrf() async {
     List<Cookie> cookies = await cookieManager.cookieJar

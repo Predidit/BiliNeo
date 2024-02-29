@@ -103,6 +103,26 @@ mixin _$VideoController on _VideoController, Store {
     });
   }
 
+  late final _$bangumiItemAtom =
+      Atom(name: '_VideoController.bangumiItem', context: context);
+
+  @override
+  BangumiInfoModel? get bangumiItem {
+    _$bangumiItemAtom.reportRead();
+    return super.bangumiItem;
+  }
+
+  bool _bangumiItemIsInitialized = false;
+
+  @override
+  set bangumiItem(BangumiInfoModel? value) {
+    _$bangumiItemAtom.reportWrite(
+        value, _bangumiItemIsInitialized ? super.bangumiItem : null, () {
+      super.bangumiItem = value;
+      _bangumiItemIsInitialized = true;
+    });
+  }
+
   @override
   String toString() {
     return '''
@@ -110,7 +130,8 @@ bvid: ${bvid},
 cid: ${cid},
 pic: ${pic},
 heroTag: ${heroTag},
-videoType: ${videoType}
+videoType: ${videoType},
+bangumiItem: ${bangumiItem}
     ''';
   }
 }

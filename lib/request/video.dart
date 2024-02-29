@@ -20,6 +20,8 @@ class VideoRequest {
       data['bvid'] = bvid;
     }
 
+    // Todo 大会员相关
+
     // 免登录查看1080p
     // if (userInfoCache.get('userInfoCache') == null &&
     //     setting.get(SettingBoxKey.p1080, defaultValue: true)) {

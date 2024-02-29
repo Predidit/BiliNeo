@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:bilineo/pages/popular/popular_controller.dart';
@@ -94,6 +96,7 @@ class _PopularPageState extends State<PopularPage> {
   }
 
   Widget contentGrid(ctr, bangumiList) {
+    int crossCount = Platform.isWindows ? 8 : 3;
     return SliverGrid(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         // 行间距
@@ -101,8 +104,8 @@ class _PopularPageState extends State<PopularPage> {
         // 列间距
         crossAxisSpacing: StyleString.cardSpace,
         // 列数
-        crossAxisCount: 3,
-        mainAxisExtent: MediaQuery.of(context).size.width / 3 / 0.65 +
+        crossAxisCount: crossCount,
+        mainAxisExtent: MediaQuery.of(context).size.width / crossCount / 0.65 +
             MediaQuery.textScalerOf(context).scale(32.0),
       ),
       delegate: SliverChildBuilderDelegate(
