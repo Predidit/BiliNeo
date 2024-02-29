@@ -8,12 +8,14 @@ import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
+import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:bilineo/utils/id.dart';
 import 'package:bilineo/utils/storage.dart';
 import 'api.dart';
 import 'constants.dart';
 import 'interceptor.dart';
+import 'package:bilineo/utils/utils.dart';
 
 class Request {
   static final Request _instance = Request._internal();
@@ -25,6 +27,44 @@ class Request {
   late String systemProxyHost;
   late String systemProxyPort;
   static final RegExp spmPrefixExp = RegExp(r'<meta name="spm_prefix" content="([^"]+?)">');
+
+  /// 设置cookie  (一般只在应用启动时调用)
+  static setCookie() async {
+    Box userInfoCache = GStorage.userInfo;
+    final String cookiePath = await Utils.getCookiePath();
+    final PersistCookieJar cookieJar = PersistCookieJar(
+      ignoreExpires: true,
+      storage: FileStorage(cookiePath),
+    );
+    cookieManager = CookieManager(cookieJar);
+    dio.interceptors.add(cookieManager);
+    final List<Cookie> cookie = await cookieManager.cookieJar
+        .loadForRequest(Uri.parse(HttpString.baseUrl));
+    final userInfo = userInfoCache.get('userInfoCache');
+    if (userInfo != null && userInfo.mid != null) {
+      final List<Cookie> cookie2 = await cookieManager.cookieJar
+          .loadForRequest(Uri.parse(HttpString.tUrl));
+      if (cookie2.isEmpty) {
+        try {
+          await Request().get(HttpString.tUrl);
+        } catch (e) {
+          log("setCookie, ${e.toString()}");
+        }
+      }
+    }
+    setOptionsHeaders(userInfo, userInfo != null && userInfo.mid != null);
+
+    try {
+      await buvidActivate();
+    } catch (e) {
+      log("setCookie, ${e.toString()}");
+    }
+
+    final String cookieString = cookie
+        .map((Cookie cookie) => '${cookie.name}=${cookie.value}')
+        .join('; ');
+    dio.options.headers['cookie'] = cookieString;
+  }
 
   // Todo 大会员相关
 
@@ -99,7 +139,7 @@ class Request {
     systemProxyPort = '';
 
     dio = Dio(options);
-
+    debugPrint('Dio 初始化完成');
     /// fix 第三方登录 302重定向 跟iOS代理问题冲突
     // ..httpClientAdapter = Http2Adapter(
     //   ConnectionManager(

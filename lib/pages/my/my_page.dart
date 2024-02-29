@@ -63,10 +63,7 @@ class _MyPageState extends State<MyPage> {
     return Scaffold(
       appBar: AppBar(title: const Text('BiliNeo My Test Page')),
       body: Center(
-        child: TextButton(
-          onPressed: () {},
-          child: const Text('测试'),
-        ),
+        child: userInfoBuild,
       ),
     );
   }

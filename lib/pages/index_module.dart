@@ -10,6 +10,7 @@ import 'package:bilineo/pages/my/my_controller.dart';
 import 'package:bilineo/pages/my/user_info.dart';
 import 'package:bilineo/pages/webview/webview_controller.dart';
 
+
 class IndexModule extends Module {
   @override
   List<Module> get imports => menu.moduleList;
@@ -21,6 +22,7 @@ class IndexModule extends Module {
     i.addSingleton(MyController.new);
     i.addSingleton(UserInfoData.new);
     i.addSingleton(WebviewController.new);
+    // i.addSingleton(GStorage.new);
     // i.addSingleton(PlayerController.new);
   }
 

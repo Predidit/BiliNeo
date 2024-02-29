@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:bilineo/pages/my/user_info.dart';
@@ -28,6 +29,7 @@ class GStorage {
         return deletedEntries > 4;
       },
     );
+    debugPrint('GStorage 初始化完成');
   }
 
   // Todo 所有者相关

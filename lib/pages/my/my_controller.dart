@@ -1,5 +1,6 @@
-import 'dart:js_interop';
+import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 import 'package:bilineo/pages/my/user_info.dart';
@@ -13,7 +14,6 @@ part 'my_controller.g.dart';
 class MyController = _MyController with _$MyController;
 
 abstract class _MyController with Store {
-
   final userInfo = Modular.get<UserInfoData>();
 
   @observable
@@ -29,8 +29,11 @@ abstract class _MyController with Store {
 
   onInit() {
     if (userInfoCache.get('userInfoCache') != null) {
+      debugPrint('登录状态初始化成功 ${userInfoCache.get('userInfoCache').toString()} ');
       // 魔改hive模型逻辑，可能有坑
-      userInfo.init(userInfoCache.get('userInfoCache'));
+      Map<String, dynamic> jsonMap =
+          jsonDecode(userInfoCache.get('userInfoCache').toString());
+      userInfo.init(jsonMap);
       userLogin = true;
     }
   }
@@ -42,13 +45,16 @@ abstract class _MyController with Store {
       webController.pageTitle = '登录bilibili';
       webController.init();
       Modular.to.pushNamed('/tab/webview/');
-    } 
+    }
   }
 
   void updateLoginStatus(val) async {
-    userInfo.init(userInfoCache.get('userInfoCache'));
+    debugPrint('登录状态刷新成功 ${userInfoCache.get('userInfoCache').toString()} ');
+    Map<String, dynamic> jsonMap =
+        jsonDecode(userInfoCache.get('userInfoCache').toString());
+    userInfo.init(jsonMap);
     userLogin = val ?? false;
-    if (val) return; 
+    if (val) return;
     //// 头像相关
     // userFace.value = userInfo != null ? userInfo.face : '';
   }
