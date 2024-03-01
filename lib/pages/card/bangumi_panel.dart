@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:bilineo/bean/bangumi/bangumi_info.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:hive/hive.dart';
+import 'package:bilineo/utils/storage.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import 'package:bilineo/pages/my/user_info.dart';
 
 class BangumiPanel extends StatefulWidget {
   const BangumiPanel({
@@ -22,11 +26,30 @@ class BangumiPanel extends StatefulWidget {
 
 class _BangumiPanelState extends State<BangumiPanel> {
   int currentIndex =0;
+  // 默认未开通
+  int vipStatus = 0;
+  // Box userInfoCache = GStorage.userInfo;
+  // dynamic userInfo;
   final ScrollController listViewScrollCtr = ScrollController();
+  final userInfo = Modular.get<UserInfoData>();
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   userInfo = userInfoCache.get('userInfoCache');
+  //   if (userInfo != null) {
+  //     vipStatus = userInfo.vipStatus;
+  //   }
+  // }
 
   // Todo 大会员相关
   void changeFucCall(item, i) async {
-    if (item.badge != null && item.badge == '会员') {
+    // userInfo = userInfoCache.get('userInfoCache');
+    // if (userInfo != null) {
+    //   vipStatus = userInfo.vipStatus;
+    // }
+    debugPrint('校验大会员中, 当前用户 ${userInfo.uname}');
+    if (item.badge != null && item.badge == '会员' && userInfo.vipStatus != 1) {
       SmartDialog.showToast('需要大会员');
       return;
     }

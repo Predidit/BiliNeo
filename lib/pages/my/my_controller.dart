@@ -31,10 +31,12 @@ abstract class _MyController with Store {
     if (userInfoCache.get('userInfoCache') != null) {
       debugPrint('登录状态初始化成功 ${userInfoCache.get('userInfoCache').toString()} ');
       // 魔改hive模型逻辑，可能有坑
-      Map<String, dynamic> jsonMap =
-          jsonDecode(userInfoCache.get('userInfoCache').toString());
-      userInfo.init(jsonMap);
-      userLogin = true;
+      // Map<String, dynamic> jsonMap =
+      //     jsonDecode(userInfoCache.get('userInfoCache').toString());
+      // var userInfoMap = userInfoCache.get('userInfoCache');
+      // userInfo.init(userInfoMap);
+      updateLoginStatus(true);
+      // userLogin = true;
     }
   }
 
@@ -49,13 +51,36 @@ abstract class _MyController with Store {
   }
 
   void updateLoginStatus(val) async {
-    debugPrint('登录状态刷新成功 ${userInfoCache.get('userInfoCache').toString()} ');
-    Map<String, dynamic> jsonMap =
-        jsonDecode(userInfoCache.get('userInfoCache').toString());
-    userInfo.init(jsonMap);
+    debugPrint('登录状态刷新成功 ${userInfoCache.get('userInfoCache').uname} ');
+    UserInfoData userInfoMap = userInfoCache.get('userInfoCache');
+    userInfo.emailVerified = userInfoMap.emailVerified;
+    userInfo.face = userInfoMap.face;
+    userInfo.hasShop = userInfoMap.hasShop;
+    userInfo.isLogin = userInfoMap.isLogin;
+    userInfo.levelInfo = userInfoMap.levelInfo;
+    userInfo.mid = userInfoMap.mid;
+    userInfo.mobileVerified = userInfoMap.mobileVerified;
+    userInfo.money = userInfoMap.money;
+    userInfo.moral = userInfoMap.moral;
+    userInfo.official = userInfoMap.official;
+    userInfo.officialVerify = userInfoMap.officialVerify;
+    userInfo.pendant = userInfoMap.pendant;
+    userInfo.scores = userInfoMap.scores;
+    userInfo.shopUrl = userInfoMap.shopUrl;
+    userInfo.uname = userInfoMap.uname;
+    userInfo.vipAvatarSub = userInfoMap.vipAvatarSub;
+    userInfo.vipDueDate = userInfoMap.vipDueDate;
+    userInfo.vipLabel = userInfoMap.vipLabel;
+    userInfo.vipNicknameColor = userInfoMap.vipNicknameColor;
+    userInfo.vipPayType = userInfoMap.vipPayType;
+    userInfo.vipStatus = userInfoMap.vipStatus;
+    userInfo.vipThemeType = userInfoMap.vipThemeType;
+    userInfo.vipType = userInfoMap.vipType;
+    userInfo.wallet = userInfoMap.wallet;
+    // userInfo.init(userInfoMap);
     userLogin = val ?? false;
-    if (val) return;
+    // if (val) return;
     //// 头像相关
     // userFace.value = userInfo != null ? userInfo.face : '';
-  }
+  } 
 }
