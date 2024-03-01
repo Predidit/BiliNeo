@@ -22,6 +22,12 @@ abstract class _MyController with Store {
   @observable
   String userFace = '';
 
+  @observable
+  String uname = '';
+
+  @observable
+  int currentLevel = 0;
+
   Box userInfoCache = GStorage.userInfo;
   final webController = Modular.get<WebviewController>();
   // Todo 设置相关
@@ -82,5 +88,9 @@ abstract class _MyController with Store {
     // if (val) return;
     //// 头像相关
     // userFace.value = userInfo != null ? userInfo.face : '';
+
+    userFace = userInfoMap.face ?? '';
+    uname = userInfoMap.uname ?? '';
+    currentLevel = userInfoMap.levelInfo!.currentLevel ?? 0;
   } 
 }

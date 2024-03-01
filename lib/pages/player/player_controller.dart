@@ -93,7 +93,7 @@ abstract class _PlayerController with Store {
     dataStatus = 'loading';
     try {
       mediaPlayer.dispose();
-      debugPrint('成功销毁已经存在的 player');
+      // debugPrint('找到逃掉的 player');
     } catch (e) {
       debugPrint('未找到已经存在的 player');
     }

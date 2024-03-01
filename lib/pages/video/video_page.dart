@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:bilineo/pages/player/player_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:bilineo/pages/video/video_controller.dart';
 import 'package:bilineo/pages/player/player_item.dart';
@@ -40,6 +41,7 @@ class _RatingPageState extends State<VideoPage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
+    videoController.init(playerController);
     return Scaffold(
       appBar: AppBar(
         title: const Text('BiliNeo Video Test Page'),
@@ -52,42 +54,60 @@ class _RatingPageState extends State<VideoPage> {
           },
         ),
       ),
-      body: Column(children: <Widget>[
-        FutureBuilder<String>(
-          future: videoController.init(playerController),
-          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: SizedBox(
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                    height: Platform.isWindows
-                        ? MediaQuery.of(context).size.width * 9.0 / 32.0
-                        : MediaQuery.of(context).size.width * 9.0 / 16.0,
-                    width: Platform.isWindows
-                        ? MediaQuery.of(context).size.width / 2
-                        : MediaQuery.of(context).size.width,
-                  ),);
-            } else if (snapshot.hasError) {
-              return Center(child: Text('发生错误: ${snapshot.error}'));
-            } else {
-              return const PlayerItem();
-            }
-          },
-        ),
+      // body: Column(children: <Widget>[
+      //   FutureBuilder<String>(
+      //     future: videoController.init(playerController),
+      //     builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+      //       if (snapshot.connectionState == ConnectionState.waiting) {
+      //         return Center(child: SizedBox(
+      //               child: Center(
+      //                 child: CircularProgressIndicator(),
+      //               ),
+      //               height: Platform.isWindows
+      //                   ? MediaQuery.of(context).size.width * 9.0 / 32.0
+      //                   : MediaQuery.of(context).size.width * 9.0 / 16.0,
+      //               width: Platform.isWindows
+      //                   ? MediaQuery.of(context).size.width / 2
+      //                   : MediaQuery.of(context).size.width,
+      //             ),);
+      //       } else if (snapshot.hasError) {
+      //         return Center(child: Text('发生错误: ${snapshot.error}'));
+      //       } else {
+      //         return const PlayerItem();
+      //       }
+      //     },
+      //   ),
 
-        // Todo
-        BangumiPanel(
-          // pages: bangumiItem != null
-          //     ? bangumiItem!.episodes!
-          //     : widget.bangumiDetail!.episodes!,
-          pages: bangumiItem!.episodes!,
-          cid: videoController.cid,
-          sheetHeight: sheetHeight,
-          changeFuc: (bvidS, cidS) =>
-              videoController.changeSeasonOrbangu(bvidS, cidS, playerController),
-        )
-      ]),
+      //   // Todo
+      //   BangumiPanel(
+      //     // pages: bangumiItem != null
+      //     //     ? bangumiItem!.episodes!
+      //     //     : widget.bangumiDetail!.episodes!,
+      //     pages: bangumiItem!.episodes!,
+      //     cid: videoController.cid,
+      //     sheetHeight: sheetHeight,
+      //     changeFuc: (bvidS, cidS) =>
+      //         videoController.changeSeasonOrbangu(bvidS, cidS, playerController),
+      //   )
+      // ]),
+
+      body: Observer(builder: (context) {
+        return Column(
+          children: [
+            const PlayerItem(),
+            BangumiPanel(
+              // pages: bangumiItem != null
+              //     ? bangumiItem!.episodes!
+              //     : widget.bangumiDetail!.episodes!,
+              pages: bangumiItem!.episodes!,
+              cid: videoController.cid,
+              sheetHeight: sheetHeight,
+              changeFuc: (bvidS, cidS) => videoController.changeSeasonOrbangu(
+                  bvidS, cidS, playerController),
+            )
+          ],
+        );
+      }),
     );
   }
 }
