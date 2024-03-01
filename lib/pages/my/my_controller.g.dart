@@ -41,11 +41,44 @@ mixin _$MyController on _MyController, Store {
     });
   }
 
+  late final _$unameAtom = Atom(name: '_MyController.uname', context: context);
+
+  @override
+  String get uname {
+    _$unameAtom.reportRead();
+    return super.uname;
+  }
+
+  @override
+  set uname(String value) {
+    _$unameAtom.reportWrite(value, super.uname, () {
+      super.uname = value;
+    });
+  }
+
+  late final _$currentLevelAtom =
+      Atom(name: '_MyController.currentLevel', context: context);
+
+  @override
+  int get currentLevel {
+    _$currentLevelAtom.reportRead();
+    return super.currentLevel;
+  }
+
+  @override
+  set currentLevel(int value) {
+    _$currentLevelAtom.reportWrite(value, super.currentLevel, () {
+      super.currentLevel = value;
+    });
+  }
+
   @override
   String toString() {
     return '''
 userLogin: ${userLogin},
-userFace: ${userFace}
+userFace: ${userFace},
+uname: ${uname},
+currentLevel: ${currentLevel}
     ''';
   }
 }

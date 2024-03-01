@@ -22,7 +22,7 @@ class PlayerController = _PlayerController with _$PlayerController;
 abstract class _PlayerController with Store {
 
   @observable
-  late String bvid;
+  String bvid = '';
 
   @observable
   late int cid;
@@ -93,7 +93,7 @@ abstract class _PlayerController with Store {
     dataStatus = 'loading';
     try {
       mediaPlayer.dispose();
-      // debugPrint('找到逃掉的 player');
+      debugPrint('找到逃掉的 player');
     } catch (e) {
       debugPrint('未找到已经存在的 player');
     }
@@ -122,7 +122,6 @@ abstract class _PlayerController with Store {
   }
 
   void dispose() {
-    // mediaPlayer.dispose();
     try {
       mediaPlayer.dispose();
       debugPrint('捕获到一个逃掉的 player');

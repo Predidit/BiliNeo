@@ -24,7 +24,7 @@ class _RatingPageState extends State<VideoPage> {
 
   @override
   void dispose() {
-    // playerController.dispose();
+    playerController.dispose();
     super.dispose();
   }
 
@@ -41,7 +41,9 @@ class _RatingPageState extends State<VideoPage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    videoController.init(playerController);
+    if (playerController.bvid == '') {
+      videoController.init(playerController);
+    }
     return Scaffold(
       appBar: AppBar(
         title: const Text('BiliNeo Video Test Page'),
