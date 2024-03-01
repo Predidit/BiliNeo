@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -47,12 +48,15 @@ abstract class _MyController with Store {
   }
 
   onLogin() async {
-    if (!userLogin) {
+    if (!userLogin && !Platform.isWindows) {
       webController.url = 'https://passport.bilibili.com/h5-app/passport/login';
       webController.type = 'login';
       webController.pageTitle = '登录bilibili';
       webController.init();
       Modular.to.pushNamed('/tab/webview/');
+    }
+    if (!userLogin && Platform.isWindows) {
+      Modular.to.pushNamed('/tab/webviewdesktop/');
     }
   }
 

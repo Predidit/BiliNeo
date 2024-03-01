@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -17,7 +19,8 @@ part 'webview_controller.g.dart';
 class WebviewController = _WebviewController with _$WebviewController;
 
 abstract class _WebviewController with Store {
-  final WebViewController controller = WebViewController();
+  // final WebViewController controller = WebViewController();
+  late var controller;
   @observable
   String type = '';
 
@@ -32,6 +35,9 @@ abstract class _WebviewController with Store {
 
 
   void init() {
+    if (!Platform.isWindows) {
+      controller = WebViewController();
+    }
     if (type == 'login') {
       controller.clearCache();
       controller.clearLocalStorage();

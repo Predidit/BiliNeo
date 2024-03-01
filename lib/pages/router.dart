@@ -4,6 +4,7 @@ import 'package:bilineo/pages/popular/popular_module.dart';
 import 'package:bilineo/pages/video/video_module.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:bilineo/pages/webview/webview_module.dart';
+import 'package:bilineo/pages/webview_desktop/webview_desktop_module.dart';
  
 class MenuRouteItem {
   final String path;
@@ -55,5 +56,9 @@ final MenuRoute menu = MenuRoute([
   MenuRouteItem(
     path: '/webview',
     module: WebviewMoudle(),
+  ),
+  MenuRouteItem(
+    path: '/webviewdesktop',
+    module: WebviewDesktopMoudle(),
   ),
 ]);
