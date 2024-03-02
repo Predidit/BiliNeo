@@ -65,16 +65,19 @@ class _WebviewDesktopPageState extends State<WebviewDesktopPage> {
     baseCookieString.split('; ').forEach((cookieString) {
       List<String> cookieParts = cookieString.split('=');
       Cookie cookie = Cookie(cookieParts[0], cookieParts[1]);
-      baseCookies.add(cookie);
+      if (cookieParts[0] == '_uuid' || cookieParts[0] == 'buvid3' || cookieParts[0] == 'buvid4' || cookieParts[0] == 'SESSDATA' || cookieParts[0] == 'bili_jct' || cookieParts[0] == 'DedeUserID' || cookieParts[0] == 'DedeUserID__ckMd5' || cookieParts[0] == 'sid') {
+        baseCookies.add(cookie);
+      }
     });
 
     List<Cookie> apiCookies = [];
     apiCookieString.split('; ').forEach((cookieString) {
       List<String> cookieParts = cookieString.split('=');
       Cookie cookie = Cookie(cookieParts[0], cookieParts[1]);
-      apiCookies.add(cookie);
+      if (cookieParts[0] == '_uuid' || cookieParts[0] == 'buvid3' || cookieParts[0] == 'buvid4' || cookieParts[0] == 'SESSDATA' || cookieParts[0] == 'bili_jct' || cookieParts[0] == 'DedeUserID' || cookieParts[0] == 'DedeUserID__ckMd5' || cookieParts[0] == 'sid') {
+        apiCookies.add(cookie);
+      }
     });
-
     await Request.cookieManager.cookieJar
         .saveFromResponse(Uri.parse(HttpString.baseUrl), baseCookies);
     await Request.cookieManager.cookieJar
