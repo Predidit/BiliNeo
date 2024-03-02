@@ -4,7 +4,6 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:bilineo/pages/webview_desktop/webview_desktop_controller.dart';
 import 'package:webview_windows/webview_windows.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
-import 'package:bilineo/request/cookie.dart';
 import 'package:bilineo/request/user.dart';
 import 'package:flutter/services.dart';
 import 'package:bilineo/utils/storage.dart';
@@ -30,27 +29,65 @@ class _WebviewDesktopPageState extends State<WebviewDesktopPage> {
   }
 
   Future<void> initPlatformState() async {
+    String _baseCookies = '';
+    String _apiCookies = '';
     await _controller.initialize();
     await _controller.loadUrl('https://passport.bilibili.com/login');
     // LISTEN DATA FROM HTML CONTENT
-    _controller.webMessage.listen((event) {
+    _controller.webMessage.listen((event) async {
       debugPrint(event);
-      confirmLogin(event);
+      if (event.startsWith('BaseCookieIs')) {
+        _baseCookies = event.substring('BaseCookieIs'.length);
+        await _controller
+            .loadUrl('https://api.bilibili.com/x/web-interface/nav');
+      }
+      if (event.startsWith('APICookieIs')) {
+        _apiCookies = event.substring('APICookieIs'.length);
+      }
+      if (_baseCookies != '' && _apiCookies != '') {
+        await confirmLogin(_baseCookies, _apiCookies);
+      }
     });
     if (!mounted) return;
 
     setState(() {});
   }
 
-  confirmLogin(String event) async {
-    var cookieString = event;
-    Request.dio.options.headers['cookie'] = cookieString;
-     Cookie baseCookie = Cookie.fromSetCookieValue(cookieString);
-    Request.cookieManager.cookieJar.saveFromResponse(Uri.parse(HttpString.baseUrl), [baseCookie]);
-    List<Cookie> cookiesDebug = await Request.cookieManager.cookieJar
+  confirmLogin(String _baseCookies, String _apiCookies) async {
+    var baseCookieString = _baseCookies;
+    var apiCookieString = _apiCookies;
+    await Request.cookieManager.cookieJar.delete(Uri.parse(HttpString.baseUrl));
+    await Request.cookieManager.cookieJar
+        .delete(Uri.parse(HttpString.apiBaseUrl));
+    Request.dio.options.headers['cookie'] = baseCookieString;
+
+    List<Cookie> baseCookies = [];
+    baseCookieString.split('; ').forEach((cookieString) {
+      List<String> cookieParts = cookieString.split('=');
+      Cookie cookie = Cookie(cookieParts[0], cookieParts[1]);
+      baseCookies.add(cookie);
+    });
+
+    List<Cookie> apiCookies = [];
+    apiCookieString.split('; ').forEach((cookieString) {
+      List<String> cookieParts = cookieString.split('=');
+      Cookie cookie = Cookie(cookieParts[0], cookieParts[1]);
+      apiCookies.add(cookie);
+    });
+
+    await Request.cookieManager.cookieJar
+        .saveFromResponse(Uri.parse(HttpString.baseUrl), baseCookies);
+    await Request.cookieManager.cookieJar
+        .saveFromResponse(Uri.parse(HttpString.apiBaseUrl), apiCookies);
+    List<Cookie> baseCookiesDebug = await Request.cookieManager.cookieJar
         .loadForRequest(Uri.parse(HttpString.baseUrl));
-    cookiesDebug.forEach((cookie) {
-      debugPrint('本地cookie: ${cookie.name}: ${cookie.value}');
+    baseCookiesDebug.forEach((cookie) {
+      debugPrint('本地 Base cookie: ${cookie.name}: ${cookie.value}');
+    });
+    List<Cookie> apiCookiesDebug = await Request.cookieManager.cookieJar
+        .loadForRequest(Uri.parse(HttpString.apiBaseUrl));
+    apiCookiesDebug.forEach((cookie) {
+      debugPrint('本地 API cookie: ${cookie.name}: ${cookie.value}');
     });
     final result = await UserHttp.userInfo();
     try {
@@ -121,12 +158,18 @@ class _WebviewDesktopPageState extends State<WebviewDesktopPage> {
                     // Todo 执行cookie获取函数
                     // _controller.executeScript('window.chrome.webview.postMessage("愿原力与你同在")');
                     _controller.executeScript(
-                        'window.chrome.webview.postMessage(document.cookie)');
-                    debugPrint('URL匹配成功, 正在获取cookie');
-                    return Container();
-                  } else {
+                        'window.chrome.webview.postMessage("BaseCookieIs" + document.cookie)');
+                    debugPrint('URL匹配成功, 正在获取baseCookie');
                     return Container();
                   }
+                  if (snapshot.hasData &&
+                      (snapshot.data ?? '')
+                          .startsWith('https://api.bilibili.com/')) {
+                    _controller.executeScript(
+                        'window.chrome.webview.postMessage("APICookieIs" + document.cookie)');
+                    debugPrint('URL匹配成功, 正在获取apiCookie');
+                  }
+                  return Container();
                 },
               ),
             ],
