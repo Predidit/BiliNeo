@@ -3,6 +3,7 @@ import 'package:bilineo/request/request.dart';
 import 'package:webview_cookie_manager/webview_cookie_manager.dart';
 
 class SetCookie {
+  // 不适用于桌面端
   static onSet() async {
     var cookies = await WebviewCookieManager().getCookies(HttpString.baseUrl);
     await Request.cookieManager.cookieJar
