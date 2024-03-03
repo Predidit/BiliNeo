@@ -194,9 +194,17 @@ class _WebviewDesktopPageState extends State<WebviewDesktopPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('windows webview test'),
+        title: const Text('BiliNeo Video Test Page'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Modular.to.navigate('/tab/my/');
+            //Modular.to.pop();
+          },
+        ),
       ),
       body: compositeView,
     );
   }
+  
 }

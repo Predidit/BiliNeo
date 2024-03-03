@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:bilineo/bean/bangumi/bangumi_info.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
@@ -25,7 +27,7 @@ class BangumiPanel extends StatefulWidget {
 }
 
 class _BangumiPanelState extends State<BangumiPanel> {
-  int currentIndex =0;
+  int currentIndex = 0;
   // 默认未开通
   int vipStatus = 0;
   // Box userInfoCache = GStorage.userInfo;
@@ -91,7 +93,7 @@ class _BangumiPanelState extends State<BangumiPanel> {
                   ),
 
                   // Todo 展示更多
-                  onPressed: () => { },
+                  onPressed: () => {},
                   child: Text(
                     '全${widget.pages.length}话',
                     style: const TextStyle(fontSize: 13),
@@ -102,16 +104,21 @@ class _BangumiPanelState extends State<BangumiPanel> {
           ),
         ),
         SizedBox(
-          height: 60,
-          child: ListView.builder(
+          height: Platform.isWindows ? 200 : 400,
+          child: GridView.builder( 
             controller: listViewScrollCtr,
-            scrollDirection: Axis.horizontal,
+            scrollDirection: Axis.vertical, // 将滚动方向改为竖直
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: Platform.isWindows ? 10 : 3,
+              crossAxisSpacing: 10, // 间距
+              mainAxisSpacing: 5, // 间距
+              childAspectRatio: 1.7, // 子项宽高比
+            ),
             itemCount: widget.pages.length,
-            itemExtent: 150,
             itemBuilder: (BuildContext context, int i) {
               return Container(
-                width: 150,
-                margin: const EdgeInsets.only(right: 10),
+                // width: 150,
+                margin: const EdgeInsets.only(bottom: 10), // 改为bottom间距
                 child: Material(
                   color: Theme.of(context).colorScheme.onInverseSurface,
                   borderRadius: BorderRadius.circular(6),
