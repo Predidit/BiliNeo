@@ -29,52 +29,60 @@ class _WebviewDesktopPageState extends State<WebviewDesktopPage> {
   }
 
   Future<void> initPlatformState() async {
-    String _baseCookies = '';
-    String _apiCookies = '';
     await _controller.initialize();
     await _controller.loadUrl('https://passport.bilibili.com/login');
     // LISTEN DATA FROM HTML CONTENT
     _controller.webMessage.listen((event) async {
       debugPrint(event);
-      if (event.startsWith('BaseCookieIs')) {
-        _baseCookies = event.substring('BaseCookieIs'.length);
-        await _controller
-            .loadUrl('https://api.bilibili.com/x/web-interface/nav');
-      }
-      if (event.startsWith('APICookieIs')) {
-        _apiCookies = event.substring('APICookieIs'.length);
-      }
-      if (_baseCookies != '' && _apiCookies != '') {
-        await confirmLogin(_baseCookies, _apiCookies);
-      }
     });
     if (!mounted) return;
 
     setState(() {});
   }
 
-  confirmLogin(String _baseCookies, String _apiCookies) async {
-    var baseCookieString = _baseCookies;
-    var apiCookieString = _apiCookies;
+  confirmLogin() async {
+    String baseCookieString =
+        await _controller.getCookies('https://www.bilibili.com') ?? '';
+    baseCookieString =
+        baseCookieString.substring(0, baseCookieString.length - 1);
+    String apiCookieString = await _controller
+            .getCookies('https://api.bilibili.com/x/web-interface/nav') ??
+        '';
+    apiCookieString = apiCookieString.substring(0, apiCookieString.length - 1);
+    debugPrint('处理前baseCookie为 $baseCookieString');
     await Request.cookieManager.cookieJar.delete(Uri.parse(HttpString.baseUrl));
     await Request.cookieManager.cookieJar
         .delete(Uri.parse(HttpString.apiBaseUrl));
     Request.dio.options.headers['cookie'] = baseCookieString;
 
     List<Cookie> baseCookies = [];
-    baseCookieString.split('; ').forEach((cookieString) {
+    baseCookieString.split(';').forEach((cookieString) {
       List<String> cookieParts = cookieString.split('=');
       Cookie cookie = Cookie(cookieParts[0], cookieParts[1]);
-      if (cookieParts[0] == '_uuid' || cookieParts[0] == 'buvid3' || cookieParts[0] == 'buvid4' || cookieParts[0] == 'SESSDATA' || cookieParts[0] == 'bili_jct' || cookieParts[0] == 'DedeUserID' || cookieParts[0] == 'DedeUserID__ckMd5' || cookieParts[0] == 'sid') {
+      if (cookieParts[0] == '_uuid' ||
+          cookieParts[0] == 'buvid3' ||
+          cookieParts[0] == 'buvid4' ||
+          cookieParts[0] == 'SESSDATA' ||
+          cookieParts[0] == 'bili_jct' ||
+          cookieParts[0] == 'DedeUserID' ||
+          cookieParts[0] == 'DedeUserID__ckMd5' ||
+          cookieParts[0] == 'sid') {
         baseCookies.add(cookie);
       }
     });
 
     List<Cookie> apiCookies = [];
-    apiCookieString.split('; ').forEach((cookieString) {
+    apiCookieString.split(';').forEach((cookieString) {
       List<String> cookieParts = cookieString.split('=');
       Cookie cookie = Cookie(cookieParts[0], cookieParts[1]);
-      if (cookieParts[0] == '_uuid' || cookieParts[0] == 'buvid3' || cookieParts[0] == 'buvid4' || cookieParts[0] == 'SESSDATA' || cookieParts[0] == 'bili_jct' || cookieParts[0] == 'DedeUserID' || cookieParts[0] == 'DedeUserID__ckMd5' || cookieParts[0] == 'sid') {
+      if (cookieParts[0] == '_uuid' ||
+          cookieParts[0] == 'buvid3' ||
+          cookieParts[0] == 'buvid4' ||
+          cookieParts[0] == 'SESSDATA' ||
+          cookieParts[0] == 'bili_jct' ||
+          cookieParts[0] == 'DedeUserID' ||
+          cookieParts[0] == 'DedeUserID__ckMd5' ||
+          cookieParts[0] == 'sid') {
         apiCookies.add(cookie);
       }
     });
@@ -160,17 +168,16 @@ class _WebviewDesktopPageState extends State<WebviewDesktopPage> {
                           .startsWith('https://www.bilibili.com/')) {
                     // Todo 执行cookie获取函数
                     // _controller.executeScript('window.chrome.webview.postMessage("愿原力与你同在")');
-                    _controller.executeScript(
-                        'window.chrome.webview.postMessage("BaseCookieIs" + document.cookie)');
                     debugPrint('URL匹配成功, 正在获取baseCookie');
+                    _controller.loadUrl(
+                        'https://api.bilibili.com/x/web-interface/nav');
                     return Container();
                   }
                   if (snapshot.hasData &&
                       (snapshot.data ?? '')
                           .startsWith('https://api.bilibili.com/')) {
-                    _controller.executeScript(
-                        'window.chrome.webview.postMessage("APICookieIs" + document.cookie)');
                     debugPrint('URL匹配成功, 正在获取apiCookie');
+                    confirmLogin();
                   }
                   return Container();
                 },
