@@ -22,6 +22,7 @@ class WebviewDesktopPage extends StatefulWidget {
 
 class _WebviewDesktopPageState extends State<WebviewDesktopPage> {
   final _controller = WebviewController();
+
   @override
   void initState() {
     super.initState();

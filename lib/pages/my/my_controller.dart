@@ -53,10 +53,10 @@ abstract class _MyController with Store {
       webController.type = 'login';
       webController.pageTitle = '登录bilibili';
       webController.init();
-      Modular.to.pushNamed('/tab/webview/');
+      Modular.to.navigate('/tab/webview/');
     }
     if (!userLogin && Platform.isWindows) {
-      Modular.to.pushNamed('/tab/webviewdesktop/');
+      Modular.to.navigate('/tab/webviewdesktop/');
     }
   }
 
