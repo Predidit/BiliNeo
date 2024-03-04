@@ -18,13 +18,10 @@ mixin _$PlayerController on _PlayerController, Store {
     return super.bvid;
   }
 
-  bool _bvidIsInitialized = false;
-
   @override
   set bvid(String value) {
-    _$bvidAtom.reportWrite(value, _bvidIsInitialized ? super.bvid : null, () {
+    _$bvidAtom.reportWrite(value, super.bvid, () {
       super.bvid = value;
-      _bvidIsInitialized = true;
     });
   }
 

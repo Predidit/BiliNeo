@@ -39,65 +39,77 @@ class _BottomMenu extends State<BottomMenu> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => NavigationBarState(),
-      child: Scaffold(
-      body: Container(
-        color: Theme.of(context).colorScheme.primaryContainer,
-        child: PageView.builder(
-          physics: const NeverScrollableScrollPhysics(),
-          controller: _page,
-          itemCount: menu.size,
-          onPageChanged: (i) => Modular.to.navigate("/tab${menu.getPath(i)}/"),
-          itemBuilder: (_, __) => const RouterOutlet(),
-        ),
-      ),
-      bottomNavigationBar: Consumer<NavigationBarState>(
-        builder: (context, state, child) {
-          return state.isHide ? const SizedBox(height: 0) : NavigationBar(
-            destinations: const <Widget>[
-              NavigationDestination(
-                selectedIcon: Icon(Icons.home),
-                icon: Icon(Icons.home_outlined),
-                label: '推荐',
-              ),
-              NavigationDestination(
-                selectedIcon: Icon(Icons.code_rounded),
-                icon: Icon(Icons.code_rounded),
-                label: '排行榜',
-              ),
-              NavigationDestination(
-                selectedIcon: Icon(Icons.settings),
-                icon: Icon(Icons.settings_outlined),
-                label: '我的',
-              ),
-            ],
-            selectedIndex: state.selectedIndex,
-            onDestinationSelected: (int index) {
-              // setState(() {
-              //   selectedIndex = index;
-              // });
-              state.updateSelectedIndex(index);
-              switch (index) {
-                case 0:
-                  {
-                    Modular.to.navigate('/tab/popular/');
-                  }
-                  break;
-                case 1:
-                  {
-                    Modular.to.navigate('/tab/rating/');
-                  }
-                  break;
-                case 2:
-                  {
-                    Modular.to.navigate('/tab/my/');
-                  }
-                  break;
-              }
-            },
-          );
-        }
-      ),
-    ));
+        create: (context) => NavigationBarState(),
+        child: Scaffold(
+          body: Container(
+            color: Theme.of(context).colorScheme.primaryContainer,
+            child: PageView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              controller: _page,
+              itemCount: menu.size,
+              onPageChanged: (i) =>
+                  Modular.to.navigate("/tab${menu.getPath(i)}/"),
+              itemBuilder: (_, __) => const RouterOutlet(),
+            ),
+          ),
+          bottomNavigationBar:
+              Consumer<NavigationBarState>(builder: (context, state, child) {
+            return state.isHide
+                ? const SizedBox(height: 0)
+                : NavigationBar(
+                    destinations: const <Widget>[
+                      NavigationDestination(
+                        selectedIcon: Icon(Icons.home),
+                        icon: Icon(Icons.home_outlined),
+                        label: '推荐',
+                      ),
+                      NavigationDestination(
+                        selectedIcon: Icon(Icons.search),
+                        icon: Icon(Icons.search_outlined),
+                        label: '搜索',
+                      ),
+                      NavigationDestination(
+                        selectedIcon: Icon(Icons.code_rounded),
+                        icon: Icon(Icons.code_rounded),
+                        label: '排行榜',
+                      ),
+                      NavigationDestination(
+                        selectedIcon: Icon(Icons.settings),
+                        icon: Icon(Icons.settings_outlined),
+                        label: '我的',
+                      ),
+                    ],
+                    selectedIndex: state.selectedIndex,
+                    onDestinationSelected: (int index) {
+                      // setState(() {
+                      //   selectedIndex = index;
+                      // });
+                      state.updateSelectedIndex(index);
+                      switch (index) {
+                        case 0:
+                          {
+                            Modular.to.navigate('/tab/popular/');
+                          }
+                          break;
+                        case 1:
+                          {
+                            Modular.to.navigate('/tab/search/');
+                          }
+                          break;
+                        case 2:
+                          {
+                            Modular.to.navigate('/tab/rating/');
+                          }
+                          break;
+                        case 3:
+                          {
+                            Modular.to.navigate('/tab/my/');
+                          }
+                          break;
+                      }
+                    },
+                  );
+          }),
+        ));
   }
 }

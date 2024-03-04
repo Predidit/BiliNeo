@@ -5,10 +5,10 @@ import 'package:bilineo/pages/init_page.dart';
 import 'package:flutter/material.dart';
 import 'package:bilineo/pages/popular/popular_controller.dart';
 import 'package:bilineo/pages/video/video_controller.dart';
-import 'package:bilineo/pages/player/player_controller.dart';
 import 'package:bilineo/pages/my/my_controller.dart';
 import 'package:bilineo/pages/my/user_info.dart';
 import 'package:bilineo/pages/webview/webview_controller.dart';
+import 'package:bilineo/pages/search/search_controller.dart';
 
 
 class IndexModule extends Module {
@@ -22,6 +22,7 @@ class IndexModule extends Module {
     i.addSingleton(MyController.new);
     i.addSingleton(UserInfoData.new);
     i.addSingleton(WebviewController.new);
+    i.addSingleton(MySearchController.new);
     // i.addSingleton(GStorage.new);
     // i.addSingleton(PlayerController.new);
   }
