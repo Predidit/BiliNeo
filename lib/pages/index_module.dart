@@ -9,6 +9,7 @@ import 'package:bilineo/pages/my/my_controller.dart';
 import 'package:bilineo/pages/my/user_info.dart';
 import 'package:bilineo/pages/webview/webview_controller.dart';
 import 'package:bilineo/pages/search/search_controller.dart';
+import 'package:bilineo/pages/search_result/results_controller.dart';
 
 
 class IndexModule extends Module {
@@ -23,6 +24,7 @@ class IndexModule extends Module {
     i.addSingleton(UserInfoData.new);
     i.addSingleton(WebviewController.new);
     i.addSingleton(MySearchController.new);
+    i.addSingleton(SearchResultController.new);
     // i.addSingleton(GStorage.new);
     // i.addSingleton(PlayerController.new);
   }

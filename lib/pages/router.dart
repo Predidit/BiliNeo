@@ -6,6 +6,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:bilineo/pages/webview/webview_module.dart';
 import 'package:bilineo/pages/webview_desktop/webview_desktop_module.dart';
 import 'package:bilineo/pages/search/search_module.dart';
+import 'package:bilineo/pages/search_result/results_module.dart';
  
 class MenuRouteItem {
   final String path;
@@ -65,5 +66,9 @@ final MenuRoute menu = MenuRoute([
   MenuRouteItem(
     path: '/search',
     module: SearchModule(),
+  ),
+  MenuRouteItem(
+    path: '/searchresult',
+    module: SearchResultModule(),
   ),
 ]);

@@ -49,12 +49,8 @@ class _SearchPageState extends State<SearchPage> {
               debugPrint('搜索框内容为空');
               return _lastOptions;
             }
-            debugPrint('提交到API的搜索内容为 $_searchingWithQuery');
+            debugPrint('提交到搜索建议API的搜索内容为 $_searchingWithQuery');
             await mySearchController.querySearchSuggest(_searchingWithQuery);
-
-            // If another search happened after this one, throw away these options.
-            // Use the previous options instead and wait for the newer request to
-            // finish.
             if (_searchingWithQuery != controller.text) {
               return _lastOptions;
             }
@@ -62,6 +58,10 @@ class _SearchPageState extends State<SearchPage> {
             _lastOptions = List<ListTile>.generate(mySearchController.searchSuggestList.length, (int index) {
               return ListTile(
                 title: mySearchController.searchSuggestList[index].textRich,
+                onTap: () {
+                  controller.text = mySearchController.searchSuggestList[index].term ?? '';
+                  mySearchController.onSelect(controller.text);  
+                },
               );
             });
 

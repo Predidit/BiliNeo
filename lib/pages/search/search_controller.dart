@@ -1,4 +1,5 @@
 import 'package:bilineo/pages/search/search_suggest.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 import 'package:flutter/material.dart';
 import 'package:bilineo/pages/search/search_controller.dart';
@@ -60,6 +61,7 @@ abstract class _MySearchController with Store {
     if (searchKeyWord == '') {
       return;
     }
-    debugPrint('Todo 搜索结果');
+    debugPrint('Todo 搜索结果 $searchKeyWord');
+    Modular.to.pushNamed('/tab/searchresult/');
   }
 }
