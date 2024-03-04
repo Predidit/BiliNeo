@@ -12,20 +12,16 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   bool isDark = false;
-  // final MySearchController mySearchController =
-  //     Modular.get<MySearchController>();
+  final MySearchController mySearchController =
+      Modular.get<MySearchController>();
+  late Iterable<Widget> _lastOptions = <Widget>[];
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(title: const Text('BiliNeo Search Test Page')),
       body: Observer(builder: (context) {
+        String _searchingWithQuery = mySearchController.searchKeyWord;
         return Center(
           child: SearchAnchor(
               builder: (BuildContext context, SearchController controller) {
@@ -35,45 +31,41 @@ class _SearchPageState extends State<SearchPage> {
                   EdgeInsets.symmetric(horizontal: 16.0)),
               onTap: () {
                 debugPrint('搜索框点击事件');
-                // Panic
-                // controller.openView();
+                // Panic, maybe due to Focus
+                controller.openView();
               },
               onChanged: (value) {
                 setState(() {
-                  debugPrint('检查点一,当前值为');
+                  debugPrint('检查点一,当前值为 $value');
                   // mySearchController.onChange(value);
                 });
               },
               leading: const Icon(Icons.search),
-              trailing: <Widget>[
-                Tooltip(
-                  message: 'Change brightness mode',
-                  child: IconButton(
-                    isSelected: isDark,
-                    onPressed: () {
-                      setState(() {
-                        isDark = !isDark;
-                      });
-                    },
-                    icon: const Icon(Icons.wb_sunny_outlined),
-                    selectedIcon: const Icon(Icons.brightness_2_outlined),
-                  ),
-                )
-              ],
             );
           }, suggestionsBuilder:
-                  (BuildContext context, SearchController controller) {
-            return List<ListTile>.generate(5, (int index) {
-              final String item = 'item $index';
+                  (BuildContext context, SearchController controller) async {
+            _searchingWithQuery = controller.text;
+            if (_searchingWithQuery == ''){
+              debugPrint('搜索框内容为空');
+              return _lastOptions;
+            }
+            debugPrint('提交到API的搜索内容为 $_searchingWithQuery');
+            await mySearchController.querySearchSuggest(_searchingWithQuery);
+
+            // If another search happened after this one, throw away these options.
+            // Use the previous options instead and wait for the newer request to
+            // finish.
+            if (_searchingWithQuery != controller.text) {
+              return _lastOptions;
+            }
+
+            _lastOptions = List<ListTile>.generate(mySearchController.searchSuggestList.length, (int index) {
               return ListTile(
-                title: Text(item),
-                onTap: () {
-                  setState(() {
-                    controller.closeView(item);
-                  });
-                },
+                title: mySearchController.searchSuggestList[index].textRich,
               );
             });
+
+            return _lastOptions;
           }),
         );
       }),

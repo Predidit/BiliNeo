@@ -38,9 +38,21 @@ abstract class _MySearchController with Store {
     var result = await SearchHttp.searchSuggest(term: value);
     if (result['status']) {
       if (result['data'] is SearchSuggestModel) {
+        debugPrint('来自服务器的搜索建议响应 ${result['data'].tag}');
         searchSuggestList = result['data'].tag;
+        // return searchSuggestList;
       }
     }
+  }
+
+  void onClickKeyword(String keyword) {
+    searchKeyWord = keyword;
+    controller.text = keyword;
+    // 移动光标
+    controller.selection = TextSelection.fromPosition(
+      TextPosition(offset: controller.value.text.length),
+    );
+    submit();
   }
 
   void submit() {
