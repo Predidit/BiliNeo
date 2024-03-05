@@ -45,10 +45,10 @@ class _WebviewDesktopPageState extends State<WebviewDesktopPage> {
         await _controller.getCookies(HttpString.baseUrl) ?? '';
     baseCookieString =
         baseCookieString.substring(0, baseCookieString.length - 1);
-    String apiCookieString = await _controller
-            .getCookies(HttpString.apiBaseUrl) ??
-        '';
-    apiCookieString = apiCookieString.substring(0, apiCookieString.length - 1);
+    // String apiCookieString = await _controller
+    //         .getCookies(HttpString.apiBaseUrl) ??
+    //     '';
+    // apiCookieString = apiCookieString.substring(0, apiCookieString.length - 1);
     debugPrint('处理前baseCookie为 $baseCookieString');
     await Request.cookieManager.cookieJar.delete(Uri.parse(HttpString.baseUrl));
     await Request.cookieManager.cookieJar
@@ -71,25 +71,28 @@ class _WebviewDesktopPageState extends State<WebviewDesktopPage> {
       }
     });
 
-    List<Cookie> apiCookies = [];
-    apiCookieString.split(';').forEach((cookieString) {
-      List<String> cookieParts = cookieString.split('=');
-      Cookie cookie = Cookie(cookieParts[0], cookieParts[1]);
-      if (cookieParts[0] == '_uuid' ||
-          cookieParts[0] == 'buvid3' ||
-          cookieParts[0] == 'buvid4' ||
-          cookieParts[0] == 'SESSDATA' ||
-          cookieParts[0] == 'bili_jct' ||
-          cookieParts[0] == 'DedeUserID' ||
-          cookieParts[0] == 'DedeUserID__ckMd5' ||
-          cookieParts[0] == 'sid') {
-        apiCookies.add(cookie);
-      }
-    });
+    // List<Cookie> apiCookies = [];
+    // apiCookieString.split(';').forEach((cookieString) {
+    //   List<String> cookieParts = cookieString.split('=');
+    //   Cookie cookie = Cookie(cookieParts[0], cookieParts[1]);
+    //   if (cookieParts[0] == '_uuid' ||
+    //       cookieParts[0] == 'buvid3' ||
+    //       cookieParts[0] == 'buvid4' ||
+    //       cookieParts[0] == 'SESSDATA' ||
+    //       cookieParts[0] == 'bili_jct' ||
+    //       cookieParts[0] == 'DedeUserID' ||
+    //       cookieParts[0] == 'DedeUserID__ckMd5' ||
+    //       cookieParts[0] == 'sid') {
+    //     apiCookies.add(cookie);
+    //   }
+    // }
+    // );
     await Request.cookieManager.cookieJar
         .saveFromResponse(Uri.parse(HttpString.baseUrl), baseCookies);
     await Request.cookieManager.cookieJar
-        .saveFromResponse(Uri.parse(HttpString.apiBaseUrl), apiCookies);
+        .saveFromResponse(Uri.parse(HttpString.apiBaseUrl), baseCookies);
+        await Request.cookieManager.cookieJar
+        .saveFromResponse(Uri.parse(HttpString.unlockAPIUrl), baseCookies);
     List<Cookie> baseCookiesDebug = await Request.cookieManager.cookieJar
         .loadForRequest(Uri.parse(HttpString.baseUrl));
     baseCookiesDebug.forEach((cookie) {

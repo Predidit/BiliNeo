@@ -8,12 +8,14 @@ import 'package:bilineo/pages/my/user_info.dart';
 class GStorage {
   static late final Box<dynamic> localCache;
   static late final Box<dynamic> userInfo;
+  static late final Box<dynamic> setting;
 
   static Future<void> init() async {
     final Directory dir = await getApplicationSupportDirectory();
     final String path = dir.path;
     await Hive.initFlutter('$path/hive');
     regAdapter();
+    setting = await Hive.openBox('setting');
     // Todo 登录用户信息
     userInfo = await Hive.openBox(
       'userInfo',
@@ -36,6 +38,15 @@ class GStorage {
   static void regAdapter() {
     Hive.registerAdapter(UserInfoDataAdapter());
     Hive.registerAdapter(LevelInfoAdapter());
+  }
+
+  static Future<void> close() async {
+    userInfo.compact();
+    userInfo.close();
+    localCache.compact();
+    localCache.close();
+    setting.compact();
+    setting.close();
   }
 }
 
@@ -60,4 +71,10 @@ class LocalCacheKey {
       // 代理host port
       systemProxyHost = 'systemProxyHost',
       systemProxyPort = 'systemProxyPort';
+}
+
+class SettingBoxKey {
+  static const String aeraUnlock = 'aeraUnlock',
+  // Todo 检查更新
+  autoUpdate = '';
 }

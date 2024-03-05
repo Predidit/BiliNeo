@@ -2,14 +2,26 @@
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:hive/hive.dart';
+import 'package:bilineo/request/constants.dart';
 import '../utils/storage.dart';
 
 class ApiInterceptor extends Interceptor {
+  static Box setting = GStorage.setting;
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    // print("请求之前");
+    if (setting.get(SettingBoxKey.aeraUnlock, defaultValue: false)) {
+      debugPrint('当前解锁状态:已解锁');
+      if (options.baseUrl == HttpString.apiBaseUrl) {
+        debugPrint('使用 ${HttpString.unlockAPIUrl} 尝试解锁');
+        options.baseUrl = HttpString.unlockAPIUrl;
+      }
+    } else {
+      debugPrint('当前解锁状态:未解锁');
+    }
+    // ebugPrint("当前解锁状态 ${SettingBoxKey.aeraUnlock}");
     // 在请求之前添加头部或认证信息
     // options.headers['Authorization'] = 'Bearer token';
     // options.headers['Content-Type'] = 'application/json';

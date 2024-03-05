@@ -5,6 +5,8 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:bilineo/pages/card/network_img_layer.dart';
 import 'package:provider/provider.dart';
 import 'package:bilineo/pages/menu/menu.dart';
+import 'package:bilineo/bean/settings/settings.dart';
+import 'package:bilineo/utils/storage.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
@@ -82,8 +84,20 @@ class _MyPageState extends State<MyPage> {
     // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(title: const Text('BiliNeo My Test Page')),
-      body: Center(
-        child: userInfoBuild,
+      body: Column(
+        children: [
+          Center(
+            child: userInfoBuild,
+          ),
+          const InkWell(
+            child: SetSwitchItem(
+            title: '港澳台模式',
+            subTitle: '实验性',
+            setKey: SettingBoxKey.aeraUnlock, 
+            defaultVal: false,
+          ),
+          )
+        ],
       ),
     );
   }
