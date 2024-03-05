@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:bilineo/pages/webview_desktop/webview_desktop_controller.dart';
 import 'package:webview_windows/webview_windows.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:bilineo/request/user.dart';
@@ -43,11 +42,11 @@ class _WebviewDesktopPageState extends State<WebviewDesktopPage> {
 
   confirmLogin() async {
     String baseCookieString =
-        await _controller.getCookies('https://www.bilibili.com') ?? '';
+        await _controller.getCookies(HttpString.baseUrl) ?? '';
     baseCookieString =
         baseCookieString.substring(0, baseCookieString.length - 1);
     String apiCookieString = await _controller
-            .getCookies('https://api.bilibili.com/x/web-interface/nav') ??
+            .getCookies(HttpString.apiBaseUrl) ??
         '';
     apiCookieString = apiCookieString.substring(0, apiCookieString.length - 1);
     debugPrint('处理前baseCookie为 $baseCookieString');
@@ -166,17 +165,17 @@ class _WebviewDesktopPageState extends State<WebviewDesktopPage> {
                 builder: (context, snapshot) {
                   if (snapshot.hasData &&
                       (snapshot.data ?? '')
-                          .startsWith('https://www.bilibili.com/')) {
+                          .startsWith(HttpString.baseUrl)) {
                     // Todo 执行cookie获取函数
                     // _controller.executeScript('window.chrome.webview.postMessage("愿原力与你同在")');
                     debugPrint('URL匹配成功, 正在获取baseCookie');
                     _controller.loadUrl(
-                        'https://api.bilibili.com/x/web-interface/nav');
+                        HttpString.apiBaseUrl + '/x/web-interface/nav');
                     return Container();
                   }
                   if (snapshot.hasData &&
                       (snapshot.data ?? '')
-                          .startsWith('https://api.bilibili.com/')) {
+                          .startsWith(HttpString.apiBaseUrl)) {
                     debugPrint('URL匹配成功, 正在获取apiCookie');
                     confirmLogin();
                   }
