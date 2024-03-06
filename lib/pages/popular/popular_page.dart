@@ -40,57 +40,59 @@ class _PopularPageState extends State<PopularPage> {
 
   @override
   Widget build(BuildContext context) {   
-    return RefreshIndicator(
-      onRefresh: () async {
-        await popularController.queryBangumiListFeed();
-      },
-      child: CustomScrollView(
-        controller: scrollController,
-        slivers: [
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 10, bottom: 10, left: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    '推荐',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                ],
+    return SafeArea(
+      child: RefreshIndicator(
+        onRefresh: () async {
+          await popularController.queryBangumiListFeed();
+        },
+        child: CustomScrollView(
+          controller: scrollController,
+          slivers: [
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 10, bottom: 10, left: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '推荐',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(
-                StyleString.safeSpace, 0, StyleString.safeSpace, 0),
-            sliver: FutureBuilder(
-              future: popularController.queryBangumiListFeed(),
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  Map data = snapshot.data as Map;
-                  if (data['status']) {
-                    return Observer(
-                      builder: (_) => contentGrid(
-                        popularController, 
-                        popularController.bangumiList
-                        )
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(
+                  StyleString.safeSpace, 0, StyleString.safeSpace, 0),
+              sliver: FutureBuilder(
+                future: popularController.queryBangumiListFeed(),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    Map data = snapshot.data as Map;
+                    if (data['status']) {
+                      return Observer(
+                        builder: (_) => contentGrid(
+                          popularController, 
+                          popularController.bangumiList
+                          )
+                        );
+                    } else {
+                      return HttpError(
+                        errMsg: data['msg'],
+                        fn: () {
+                              popularController.queryBangumiListFeed();
+                        },
                       );
+                    }
                   } else {
-                    return HttpError(
-                      errMsg: data['msg'],
-                      fn: () {
-                            popularController.queryBangumiListFeed();
-                      },
-                    );
+                    return contentGrid(popularController, []);
                   }
-                } else {
-                  return contentGrid(popularController, []);
-                }
-              },
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

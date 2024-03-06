@@ -57,10 +57,10 @@ class ApiInterceptor extends Interceptor {
   void onError(DioException err, ErrorInterceptorHandler handler) async {
     // 处理网络请求错误
     // handler.next(err);
-    SmartDialog.showToast(
-      await dioError(err),
-      displayType: SmartToastType.onlyRefresh,
-    );
+    // SmartDialog.showToast(
+    //   await dioError(err),
+    //   displayType: SmartToastType.onlyRefresh,
+    // );
     super.onError(err, handler);
   }
 
@@ -82,7 +82,7 @@ class ApiInterceptor extends Interceptor {
         return '发送请求超时，请检查网络设置';
       case DioExceptionType.unknown:
         final String res = await checkConnect();
-        return '$res，网络异常！';
+        return '$res，网络异常！如果您已打开港澳台模式，尝试关闭';
     }
   }
 

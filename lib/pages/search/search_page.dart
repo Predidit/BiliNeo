@@ -15,11 +15,12 @@ class _SearchPageState extends State<SearchPage> {
   final MySearchController mySearchController =
       Modular.get<MySearchController>();
   late Iterable<Widget> _lastOptions = <Widget>[];
+  
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('BiliNeo Search Test Page')),
+      appBar: AppBar(title: const Text('')),
       body: Observer(builder: (context) {
         String _searchingWithQuery = mySearchController.searchKeyWord;
         return Center(
@@ -45,22 +46,26 @@ class _SearchPageState extends State<SearchPage> {
           }, suggestionsBuilder:
                   (BuildContext context, SearchController controller) async {
             _searchingWithQuery = controller.text;
-            if (_searchingWithQuery == ''){
+            if (_searchingWithQuery == '') {
               debugPrint('搜索框内容为空');
-              return _lastOptions;
+              return [];
             }
+
             debugPrint('提交到搜索建议API的搜索内容为 $_searchingWithQuery');
             await mySearchController.querySearchSuggest(_searchingWithQuery);
+
             if (_searchingWithQuery != controller.text) {
               return _lastOptions;
             }
 
-            _lastOptions = List<ListTile>.generate(mySearchController.searchSuggestList.length, (int index) {
+            _lastOptions = List<ListTile>.generate(
+                mySearchController.searchSuggestList.length, (int index) {
               return ListTile(
                 title: mySearchController.searchSuggestList[index].textRich,
                 onTap: () {
-                  controller.text = mySearchController.searchSuggestList[index].term ?? '';
-                  mySearchController.onSelect(controller.text);  
+                  controller.text =
+                      mySearchController.searchSuggestList[index].term ?? '';
+                  mySearchController.onSelect(controller.text);
                 },
               );
             });

@@ -62,6 +62,6 @@ abstract class _MySearchController with Store {
       return;
     }
     debugPrint('Todo 搜索结果 $searchKeyWord');
-    Modular.to.pushNamed('/tab/searchresult/');
+    Modular.to.navigate('/tab/searchresult/');
   }
 }

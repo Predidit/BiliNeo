@@ -19,6 +19,8 @@ class SetCookie {
     cookies = await WebviewCookieManager().getCookies(HttpString.apiBaseUrl);
     await Request.cookieManager.cookieJar
         .saveFromResponse(Uri.parse(HttpString.apiBaseUrl), cookies);
+    await Request.cookieManager.cookieJar
+        .saveFromResponse(Uri.parse(HttpString.unlockAPIUrl), cookies);
 
     cookies.forEach((cookie) {
       debugPrint('移动端调试 当前apicookie: ${cookie.name}: ${cookie.value}');

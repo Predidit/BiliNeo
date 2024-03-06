@@ -83,7 +83,7 @@ class _MyPageState extends State<MyPage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(title: const Text('BiliNeo My Test Page')),
+      appBar: AppBar(title: const Text('')),
       body: Column(
         children: [
           Center(

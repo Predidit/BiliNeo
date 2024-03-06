@@ -25,39 +25,18 @@ class _SearchResultPageState extends State<SearchResultPage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        shape: Border(
-          bottom: BorderSide(
-            color: Theme.of(context).dividerColor.withOpacity(0.08),
-            width: 1,
-          ),
-        ),
-        titleSpacing: 0,
-        centerTitle: false,
-        title: GestureDetector(
-          onTap: () => Modular.to.navigate('/tab/search/'),
-          child: SizedBox(
-            width: double.infinity,
-            child: Text(
-              '${mySearchController.searchKeyWord}',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-          ),
+        title: Text(mySearchController.searchKeyWord),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Modular.to.navigate('/tab/search/');
+            //Modular.to.pop();
+          },
         ),
       ),
       body: Column(
         children: [
           Expanded(
-              // child: Column(
-              //   children: [
-              //     for (var i in SearchType.values) ...{
-              //       SearchPanel(
-              //         keyword: mySearchController.searchKeyWord,
-              //         searchType: i,
-              //         tag: DateTime.now().millisecondsSinceEpoch.toString(),
-              //       )
-              //     }
-              //   ],
-              // ),
               child: SearchPanel(
             keyword: mySearchController.searchKeyWord,
             searchType: SearchType.media_bangumi,
