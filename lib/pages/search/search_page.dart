@@ -16,7 +16,6 @@ class _SearchPageState extends State<SearchPage> {
       Modular.get<MySearchController>();
   late Iterable<Widget> _lastOptions = <Widget>[];
   
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

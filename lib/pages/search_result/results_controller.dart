@@ -28,6 +28,9 @@ abstract class _SearchResultController with Store {
   SearchType searchType = SearchType.media_bangumi;
 
   Future onSearch({type = 'init'}) async {
+    if (type == 'init') {
+      page = 1;
+    }
     var result = await SearchHttp.searchByType(
         searchType: searchType,
         keyword: searchKeyWord,
@@ -35,7 +38,7 @@ abstract class _SearchResultController with Store {
         order: null,
         duration: null);
     if (result['status']) {
-      if (type == 'onRefresh') {
+      if (type == 'onRefresh' || type == 'init') {
         resultList = result['data'].list;
       } else {
         resultList.addAll(result['data'].list);

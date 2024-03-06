@@ -4,6 +4,7 @@ import 'package:mobx/mobx.dart';
 import 'package:flutter/material.dart';
 import 'package:bilineo/pages/search/search_controller.dart';
 import 'package:bilineo/request/search.dart';
+import 'package:bilineo/pages/search_result/results_controller.dart';
 
 part 'search_controller.g.dart';
 
@@ -62,6 +63,12 @@ abstract class _MySearchController with Store {
       return;
     }
     debugPrint('Todo 搜索结果 $searchKeyWord');
+    // final MySearchController mySearchController =
+    //     Modular.get<MySearchController>();
+    // final SearchResultController searchResultController =
+    //     Modular.get<SearchResultController>();
+    // searchResultController.searchKeyWord = mySearchController.searchKeyWord;
+    // searchResultController.onSearch();
     Modular.to.navigate('/tab/searchresult/');
   }
 }
