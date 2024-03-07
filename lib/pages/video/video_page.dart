@@ -46,12 +46,13 @@ class _RatingPageState extends State<VideoPage> {
     }
     return Scaffold(
       appBar: AppBar(
-        title: const Text('BiliNeo Video Test Page'),
+        title: Text(videoController.bangumiItem!.seasonTitle ?? ''),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
             navigationBarState.showNavigate();
-            Modular.to.navigate('/tab/popular');
+            navigationBarState.updateSelectedIndex(0);
+            Modular.to.navigate('/tab/popular'); 
             //Modular.to.pop();
           },
         ),

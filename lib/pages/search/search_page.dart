@@ -15,7 +15,9 @@ class _SearchPageState extends State<SearchPage> {
   final MySearchController mySearchController =
       Modular.get<MySearchController>();
   late Iterable<Widget> _lastOptions = <Widget>[];
-  
+  FocusNode barFocusNode = FocusNode();
+  FocusNode suggestFocusNode = FocusNode();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,6 +28,7 @@ class _SearchPageState extends State<SearchPage> {
           child: SearchAnchor(
               builder: (BuildContext context, SearchController controller) {
             return SearchBar(
+              focusNode: barFocusNode,
               controller: controller,
               padding: const MaterialStatePropertyAll<EdgeInsets>(
                   EdgeInsets.symmetric(horizontal: 16.0)),
@@ -34,11 +37,15 @@ class _SearchPageState extends State<SearchPage> {
                 // Panic, maybe due to Focus
                 controller.openView();
               },
-              onChanged: (value) {
-                setState(() {
-                  debugPrint('检查点一,当前值为 $value');
-                  // mySearchController.onChange(value);
-                });
+              // onChanged: (value) {
+              //   debugPrint('搜索建议获得焦点,当前值为 $value');
+              //   mySearchController.querySearchSuggest(controller.text);
+              //   // barFocusNode.requestFocus();
+              //   // suggestFocusNode.requestFocus();
+              // },
+              onSubmitted: (value) {
+                debugPrint('提交 ${controller.text}');
+                mySearchController.onSelect(controller.text);
               },
               leading: const Icon(Icons.search),
             );
@@ -49,7 +56,6 @@ class _SearchPageState extends State<SearchPage> {
               debugPrint('搜索框内容为空');
               return [];
             }
-
             debugPrint('提交到搜索建议API的搜索内容为 $_searchingWithQuery');
             await mySearchController.querySearchSuggest(_searchingWithQuery);
 
@@ -59,7 +65,10 @@ class _SearchPageState extends State<SearchPage> {
 
             _lastOptions = List<ListTile>.generate(
                 mySearchController.searchSuggestList.length, (int index) {
+              // debugPrint('搜索框获得焦点');
+              // barFocusNode.requestFocus();
               return ListTile(
+                focusNode: suggestFocusNode,
                 title: mySearchController.searchSuggestList[index].textRich,
                 onTap: () {
                   controller.text =

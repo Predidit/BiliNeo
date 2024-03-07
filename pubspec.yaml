@@ -51,7 +51,6 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   flutter_smart_dialog: ^4.9.4
-  get: ^4.6.5
   cached_network_image: ^3.3.0
 
   media_kit: ^1.1.10                             # Primary package.

@@ -69,7 +69,7 @@ abstract class _PlayerController with Store {
   bool enableCDN = true;
   int cacheVideoQa = 0;
   String cacheDecode = VideoDecodeFormats.values.last.code;
-  late int cacheAudioQa;
+  int cacheAudioQa = AudioQuality.hiRes.code;
   late VideoQuality currentVideoQa;
   late VideoDecodeFormats currentDecodeFormats;
   late AudioQuality currentAudioQa;

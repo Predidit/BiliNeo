@@ -25,9 +25,9 @@ class _PopularPageState extends State<PopularPage> {
     debugPrint('Popular初始化成功');
     scrollController.addListener(() {
       if (scrollController.position.pixels >=
-            scrollController.position.maxScrollExtent - 200) {
+            scrollController.position.maxScrollExtent - 200 && popularController.isLoadingMore == false) {
         popularController.isLoadingMore = true;
-        popularController.onLoad();
+        popularController.onLoad(); 
       }
     });
   }
