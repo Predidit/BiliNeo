@@ -91,12 +91,21 @@ class _MyPageState extends State<MyPage> {
           ),
           const InkWell(
             child: SetSwitchItem(
-            title: '港澳台模式',
-            subTitle: '实验性',
-            setKey: SettingBoxKey.aeraUnlock, 
-            defaultVal: false,
+              title: '港澳台模式',
+              subTitle: '实验性',
+              setKey: SettingBoxKey.aeraUnlock,
+              defaultVal: false,
+            ),
           ),
-          )
+          Observer(builder: (context) {
+            return _mineController.userLogin ? ListTile(
+              onTap: () {
+                _mineController.loginOut();
+              },
+              dense: false,
+              title: const Text('退出登录'),
+            ) : Container();
+          }),
         ],
       ),
     );
