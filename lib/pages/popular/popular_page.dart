@@ -17,18 +17,27 @@ class PopularPage extends StatefulWidget {
   State<PopularPage> createState() => _PopularPageState();
 }
 
-class _PopularPageState extends State<PopularPage> {
+class _PopularPageState extends State<PopularPage>
+    with AutomaticKeepAliveClientMixin {
   DateTime? _lastPressedAt;
   // double scrollOffset = 0.0;
   final ScrollController scrollController = ScrollController();
   final PopularController popularController = Modular.get<PopularController>();
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   void initState() {
     super.initState();
     debugPrint('Popular初始化成功');
+    if (popularController.bangumiList.length < 5) {
+      debugPrint('Popular缓存列表为空, 尝试重加载');
+      popularController.scrollOffset = 0.0;
+      popularController.queryBangumiListFeed();
+    }
     scrollController.addListener(() {
-      // scrollOffset = scrollController.offset;
+      popularController.scrollOffset = scrollController.offset;
       if (scrollController.position.pixels >=
               scrollController.position.maxScrollExtent - 200 &&
           popularController.isLoadingMore == false) {
@@ -36,25 +45,14 @@ class _PopularPageState extends State<PopularPage> {
         popularController.onLoad();
       }
     });
-    // scrollController.jumpTo(scrollOffset);
-
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   scrollController.addListener(() {
-    //     scrollOffset = scrollController.offset;
-    //     if (scrollController.position.pixels >=
-    //             scrollController.position.maxScrollExtent - 200 &&
-    //         popularController.isLoadingMore == false) {
-    //       popularController.isLoadingMore = true;
-    //       popularController.onLoad();
-    //     }
-    //   });
-    //   scrollController.jumpTo(scrollOffset);
-    // });
+    debugPrint('Popular监听器已添加');
   }
 
   @override
   void dispose() {
+    // popularController.scrollOffset = scrollController.offset;
     scrollController.removeListener(() {});
+    debugPrint('popular 模块已卸载, 监听器移除');
     super.dispose();
   }
 
@@ -72,6 +70,13 @@ class _PopularPageState extends State<PopularPage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+    var themedata = Theme.of(context);
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      debugPrint('Popular缓存列表非空, 尝试恢复状态');
+      scrollController.jumpTo(popularController.scrollOffset);
+      debugPrint('Popular加载完成');
+    });
     return PopScope(
       canPop: false,
       onPopInvoked: (bool didPop) async {
@@ -82,57 +87,55 @@ class _PopularPageState extends State<PopularPage> {
           onRefresh: () async {
             await popularController.queryBangumiListFeed();
           },
-          child: CustomScrollView(
-            controller: scrollController,
-            slivers: [
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 10, bottom: 10, left: 16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        '推荐',
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                    ],
+          child: Scaffold(
+            body: CustomScrollView(
+              controller: scrollController,
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.only(top: 10, bottom: 10, left: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '推荐',
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              SliverPadding(
-                padding: const EdgeInsets.fromLTRB(
-                    StyleString.safeSpace, 0, StyleString.safeSpace, 0),
-                sliver: FutureBuilder(
-                  future: popularController.queryBangumiListFeed(),
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      Map data = snapshot.data as Map;
-                      if (data['status']) {
-                        return Observer(
-                            builder: (_) => contentGrid(popularController,
-                                popularController.bangumiList));
-                      } else {
-                        return HttpError(
-                          errMsg: data['msg'],
-                          fn: () {
-                            popularController.queryBangumiListFeed();
-                          },
-                        );
-                      }
-                    } else {
-                      return contentGrid(popularController, []);
-                    }
-                  },
-                ),
-              ),
-            ],
+                SliverPadding(
+                    padding: const EdgeInsets.fromLTRB(
+                        StyleString.safeSpace, 0, StyleString.safeSpace, 0),
+                    sliver: Observer(builder: (context) {
+                      return (popularController.bangumiList.length < 5)
+                          ? HttpError(
+                              errMsg: '加载推荐流错误',
+                              fn: () {
+                                popularController.queryBangumiListFeed();
+                              },
+                            )
+                          : contentGrid(popularController.bangumiList);
+                    })),
+              ],
+            ),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                scrollController.jumpTo(0.0);
+                popularController.scrollOffset = 0.0;
+              },
+              child: const Icon(Icons.arrow_upward),
+            ),
+            backgroundColor: themedata.colorScheme.primaryContainer,
           ),
         ),
       ),
     );
   }
 
-  Widget contentGrid(ctr, bangumiList) {
+  Widget contentGrid(bangumiList) {
     int crossCount = Platform.isWindows ? 8 : 3;
     return SliverGrid(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -156,8 +159,3 @@ class _PopularPageState extends State<PopularPage> {
     );
   }
 }
-
-// class MyPageController extends Disposable {
-//   @override
-//   void dispose() {}
-// }

@@ -19,6 +19,7 @@ abstract class _PopularController with Store {
   List<BangumiListItemModel> get listValue => bangumiList.toList();
 
   int _currentPage = 1;
+  double scrollOffset = 0.0;
   bool isLoadingMore = true;
 
   @action

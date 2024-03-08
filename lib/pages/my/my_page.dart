@@ -101,12 +101,13 @@ class _MyPageState extends State<MyPage> {
             Center(
               child: userInfoBuild,
             ),
-            const InkWell(
-              child: SetSwitchItem(
+            InkWell(
+              child: SetSwitchItem( 
                 title: '港澳台模式',
                 subTitle: '实验性',
                 setKey: SettingBoxKey.aeraUnlock,
                 defaultVal: false,
+                callFn: (_) => {_mineController.clearPopularCache()},
               ),
             ),
             Observer(builder: (context) {

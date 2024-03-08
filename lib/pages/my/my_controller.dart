@@ -10,6 +10,7 @@ import 'package:hive/hive.dart';
 import 'package:bilineo/pages/webview/webview_controller.dart';
 import 'package:bilineo/request/request.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:bilineo/pages/popular/popular_controller.dart';
 import 'package:webview_windows/webview_windows.dart' as desktopWebview;
 
 // import 'package:webview_flutter/webview_flutter.dart';
@@ -20,6 +21,7 @@ class MyController = _MyController with _$MyController;
 
 abstract class _MyController with Store {
   final userInfo = Modular.get<UserInfoData>();
+  final PopularController popularController = Modular.get<PopularController>();
 
   @observable
   bool userLogin = false;
@@ -94,6 +96,7 @@ abstract class _MyController with Store {
                 //     .put(LocalCacheKey.accessKey, {'mid': -1, 'value': ''});
 
                 updateLoginStatus(false);
+                
                 SmartDialog.dismiss()
                     .then((value) => Modular.to.navigate('/tab/my/'));
               },
@@ -146,5 +149,8 @@ abstract class _MyController with Store {
     // if (val) return;
     //// 头像相关
     // userFace.value = userInfo != null ? userInfo.face : '';
+  }
+  clearPopularCache() {
+    popularController.bangumiList.clear();
   }
 }
