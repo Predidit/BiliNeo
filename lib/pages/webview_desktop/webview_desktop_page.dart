@@ -177,7 +177,7 @@ class _WebviewDesktopPageState extends State<WebviewDesktopPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('BiliNeo Video Test Page'),
+        title: const Text('Bilibili 登录'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {

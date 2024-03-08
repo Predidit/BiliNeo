@@ -28,6 +28,13 @@ class _RatingPageState extends State<VideoPage> {
     super.dispose();
   }
 
+  void onBackPressed(BuildContext context) {
+    final navigationBarState = Provider.of<NavigationBarState>(context, listen: false);
+    navigationBarState.showNavigate();
+    navigationBarState.updateSelectedIndex(0);
+    Modular.to.navigate('/tab/popular/');
+  }
+
   @override
   Widget build(BuildContext context) {
     final bangumiItem = videoController.bangumiItem;
@@ -44,73 +51,42 @@ class _RatingPageState extends State<VideoPage> {
     if (playerController.bvid == '') {
       videoController.init(playerController);
     }
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(videoController.bangumiItem!.seasonTitle ?? ''),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            navigationBarState.showNavigate();
-            navigationBarState.updateSelectedIndex(0);
-            Modular.to.navigate('/tab/popular'); 
-            //Modular.to.pop();
-          },
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (bool didPop) async {
+        onBackPressed(context);
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(videoController.bangumiItem!.seasonTitle ?? ''),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              navigationBarState.showNavigate();
+              navigationBarState.updateSelectedIndex(0);
+              Modular.to.navigate('/tab/popular/');
+              //Modular.to.pop();
+            },
+          ),
         ),
+        body: Observer(builder: (context) {
+          return Column(
+            children: [
+              const PlayerItem(),
+              BangumiPanel(
+                // pages: bangumiItem != null
+                //     ? bangumiItem!.episodes!
+                //     : widget.bangumiDetail!.episodes!,
+                pages: bangumiItem!.episodes!,
+                cid: videoController.cid,
+                sheetHeight: sheetHeight,
+                changeFuc: (bvidS, cidS) => videoController.changeSeasonOrbangu(
+                    bvidS, cidS, playerController),
+              )
+            ],
+          );
+        }),
       ),
-      // body: Column(children: <Widget>[
-      //   FutureBuilder<String>(
-      //     future: videoController.init(playerController),
-      //     builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-      //       if (snapshot.connectionState == ConnectionState.waiting) {
-      //         return Center(child: SizedBox(
-      //               child: Center(
-      //                 child: CircularProgressIndicator(),
-      //               ),
-      //               height: Platform.isWindows
-      //                   ? MediaQuery.of(context).size.width * 9.0 / 32.0
-      //                   : MediaQuery.of(context).size.width * 9.0 / 16.0,
-      //               width: Platform.isWindows
-      //                   ? MediaQuery.of(context).size.width / 2
-      //                   : MediaQuery.of(context).size.width,
-      //             ),);
-      //       } else if (snapshot.hasError) {
-      //         return Center(child: Text('发生错误: ${snapshot.error}'));
-      //       } else {
-      //         return const PlayerItem();
-      //       }
-      //     },
-      //   ),
-
-      //   // Todo
-      //   BangumiPanel(
-      //     // pages: bangumiItem != null
-      //     //     ? bangumiItem!.episodes!
-      //     //     : widget.bangumiDetail!.episodes!,
-      //     pages: bangumiItem!.episodes!,
-      //     cid: videoController.cid,
-      //     sheetHeight: sheetHeight,
-      //     changeFuc: (bvidS, cidS) =>
-      //         videoController.changeSeasonOrbangu(bvidS, cidS, playerController),
-      //   )
-      // ]),
-
-      body: Observer(builder: (context) {
-        return Column(
-          children: [
-            const PlayerItem(),
-            BangumiPanel(
-              // pages: bangumiItem != null
-              //     ? bangumiItem!.episodes!
-              //     : widget.bangumiDetail!.episodes!,
-              pages: bangumiItem!.episodes!,
-              cid: videoController.cid,
-              sheetHeight: sheetHeight,
-              changeFuc: (bvidS, cidS) => videoController.changeSeasonOrbangu(
-                  bvidS, cidS, playerController),
-            )
-          ],
-        );
-      }),
     );
   }
 }

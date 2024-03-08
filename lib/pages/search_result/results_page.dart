@@ -4,6 +4,8 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:bilineo/pages/search/search_controller.dart';
 import 'package:bilineo/pages/search_result/results_item.dart';
 import 'package:bilineo/pages/search_result/results_controller.dart';
+import 'package:bilineo/pages/menu/menu.dart';
+import 'package:provider/provider.dart';
 
 class SearchResultPage extends StatefulWidget {
   const SearchResultPage({super.key});
@@ -32,28 +34,41 @@ class _SearchResultPageState extends State<SearchResultPage>
     super.dispose();
   }
 
+  void onBackPressed(BuildContext context) {
+    final navigationBarState = Provider.of<NavigationBarState>(context, listen: false);
+    navigationBarState.showNavigate();
+    navigationBarState.updateSelectedIndex(1);
+    Modular.to.navigate('/tab/search/');
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(mySearchController.searchKeyWord),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Modular.to.navigate('/tab/search/');
-            //Modular.to.pop();
-          },
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (bool didPop) async {
+        onBackPressed(context);
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(mySearchController.searchKeyWord),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Modular.to.navigate('/tab/search/');
+              //Modular.to.pop();
+            },
+          ),
         ),
-      ),
-      body: Column(
-        children: [
-          Expanded(
-              child: SearchPanel(
-            keyword: mySearchController.searchKeyWord,
-            searchType: SearchType.media_bangumi,
-            tag: DateTime.now().millisecondsSinceEpoch.toString(),
-          )),
-        ],
+        body: Column(
+          children: [
+            Expanded(
+                child: SearchPanel(
+              keyword: mySearchController.searchKeyWord,
+              searchType: SearchType.media_bangumi,
+              tag: DateTime.now().millisecondsSinceEpoch.toString(),
+            )),
+          ],
+        ),
       ),
     );
   }
