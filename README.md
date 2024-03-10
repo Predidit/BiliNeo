@@ -1,6 +1,6 @@
 # bilineo
 
-又一个 Bilibili 第三方客户端，仅支持番剧相关功能，本项目使用 flutter 构建，支持 Windows/Android 平台，暂时没有支持 iOS/MacOS 计划。本项目目的为个人学习与测试 Flutter 开发，所用API为B站公开API的封装，无任何破解行为。
+又一个 Bilibili 第三方客户端，仅支持番剧相关功能，本项目使用 flutter 构建，支持 Windows(windows10 1809 以上)/Android(Android10 及以上) 平台。本项目目的为个人学习与测试 Flutter 开发，所用API为B站公开API的封装，无任何破解行为。
 
 ## 致谢
 
