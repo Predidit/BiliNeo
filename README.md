@@ -1,16 +1,11 @@
 # bilineo
 
-A new Flutter project.
+又一个 Bilibili 第三方客户端，仅支持番剧相关功能，本项目使用 flutter 构建，支持 Windows/Android 平台，暂时没有支持 iOS/MacOS 计划。本项目目的为个人学习与测试 Flutter 开发，所用API为B站公开API的封装，无任何破解行为。
 
-## Getting Started
+## 致谢
 
-This project is a starting point for a Flutter application.
+特别感谢 [pilipala](https://github.com/guozhigq/pilipala) 本项目使用了来自 pilipala 的代码。
 
-A few resources to get you started if this is your first Flutter project:
+感谢 [bilibili-API-collect](https://github.com/SocialSisterYi/bilibili-API-collect) 该项目收集的公开API使第三方客户端成为可能。
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+感谢 [bilibili-helper](https://github.com/ipcjs/bilibili-helper) 提供了解析 Bilibili 港澳台的相关思路。
