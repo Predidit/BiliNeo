@@ -29,6 +29,17 @@ class _RatingPageState extends State<VideoPage> {
   }
 
   void onBackPressed(BuildContext context) {
+    if (MediaQuery.of(context).orientation == Orientation.landscape) {
+      debugPrint('当前播放器全屏');
+      try {
+        playerController.exitFullScreen();
+        Modular.to.pop(context);
+        return;
+      } catch (e) {
+        debugPrint(e.toString());
+      }
+    }
+    debugPrint('当前播放器非全屏');
     final navigationBarState = Provider.of<NavigationBarState>(context, listen: false);
     navigationBarState.showNavigate();
     navigationBarState.updateSelectedIndex(0);

@@ -61,6 +61,7 @@ dependencies:
   webview_cookie_manager: ^2.0.6
   webview_flutter: ^4.2.2
   url_launcher: ^6.1.14
+  device_info_plus: ^9.0.2
   webview_windows:
     git:
       url: https://github.com/Predidit/flutter-webview-windows.git

@@ -13,14 +13,15 @@ import 'package:universal_platform/universal_platform.dart';
 import 'package:bilineo/utils/utils.dart';
 import 'package:bilineo/utils/video.dart';
 import 'package:bilineo/request/constants.dart';
-
+import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 
 part 'player_controller.g.dart';
 
 class PlayerController = _PlayerController with _$PlayerController;
 
 abstract class _PlayerController with Store {
-
   @observable
   String bvid = '';
 
@@ -99,7 +100,8 @@ abstract class _PlayerController with Store {
     }
     debugPrint('VideoURL开始初始化');
     await queryVideoUrl();
-    await setDataSource(DataSource(
+    await setDataSource(
+      DataSource(
         // Todo
         videoSource: videoUrl,
         audioSource: audioUrl,
@@ -114,11 +116,12 @@ abstract class _PlayerController with Store {
       enableHAS: enableHA,
       bvidS: bvid,
       cidS: cid,
-      autoplayS: autoPlay,);
-      debugPrint('正在播放的bv是 $bvid');
-      debugPrint('正在播放的cid是 $cid');
-      debugPrint('VideoURL初始化成功 ${videoUrl}');
-      dataStatus = 'loaded';
+      autoplayS: autoPlay,
+    );
+    debugPrint('正在播放的bv是 $bvid');
+    debugPrint('正在播放的cid是 $cid');
+    debugPrint('VideoURL初始化成功 ${videoUrl}');
+    dataStatus = 'loaded';
   }
 
   void dispose() {
@@ -178,7 +181,7 @@ abstract class _PlayerController with Store {
       mediaPlayer = await createVideoController(
           dataSource, looping, enableHA, width, height);
       // 获取视频时长 00:00
-      
+
       // 记录播放时间以待下次播放 (Todo)
 
       // 数据加载完成
@@ -197,14 +200,13 @@ abstract class _PlayerController with Store {
     double? width,
     double? height,
   ) async {
-    mediaPlayer = 
-        Player(
-          configuration: PlayerConfiguration(
-            // 默认缓存 5M 大小
-            bufferSize:
-                videoType == 'live' ? 32 * 1024 * 1024 : 5 * 1024 * 1024,   //panic
-          ),
-        );
+    mediaPlayer = Player(
+      configuration: PlayerConfiguration(
+        // 默认缓存 5M 大小
+        bufferSize:
+            videoType == 'live' ? 32 * 1024 * 1024 : 5 * 1024 * 1024, //panic
+      ),
+    );
 
     var pp = mediaPlayer.platform as NativePlayer;
     // 解除倍速限制
@@ -247,14 +249,13 @@ abstract class _PlayerController with Store {
       await pp.setProperty("blend-subtitles", "video");
     }
 
-    videoController = 
-        VideoController(
-          mediaPlayer,
-          configuration: VideoControllerConfiguration(
-            enableHardwareAcceleration: enableHA,
-            androidAttachSurfaceAfterVideoParameters: false,
-          ),
-        );
+    videoController = VideoController(
+      mediaPlayer,
+      configuration: VideoControllerConfiguration(
+        enableHardwareAcceleration: enableHA,
+        androidAttachSurfaceAfterVideoParameters: false,
+      ),
+    );
     debugPrint('videoController 配置成功');
 
     mediaPlayer.setPlaylistMode(looping);
@@ -293,7 +294,7 @@ abstract class _PlayerController with Store {
           '该视频为专属视频，仅提供试看',
           displayTime: const Duration(seconds: 3),
         );
-        videoUrl = data.durl!.first.url!; 
+        videoUrl = data.durl!.first.url!;
         audioUrl = '';
         defaultST = Duration.zero;
         firstVideo = VideoItem();
@@ -328,7 +329,7 @@ abstract class _PlayerController with Store {
         }
         currentVideoQa = VideoQualityCode.fromCode(resVideoQa)!;
 
-      debugPrint('检查点一');
+        debugPrint('检查点一');
 
         /// 取出符合当前画质的videoList
         final List<VideoItem> videosList =
@@ -367,7 +368,7 @@ abstract class _PlayerController with Store {
         }
         debugPrint('获取资源中，非试看');
         videoUrl = enableCDN
-            ? VideoUtils.getCdnUrl(firstVideo) 
+            ? VideoUtils.getCdnUrl(firstVideo)
             : (firstVideo.backupUrl ?? firstVideo.baseUrl!);
       } catch (err) {
         debugPrint('获取第一个视频错误： $err');
@@ -426,4 +427,33 @@ abstract class _PlayerController with Store {
     return result;
   }
 
+  //退出全屏显示
+  Future<void> exitFullScreen() async {
+    debugPrint('退出全屏模式');
+    dynamic document;
+    late SystemUiMode mode = SystemUiMode.edgeToEdge;
+    try {
+      if (kIsWeb) {
+        document.exitFullscreen();
+      } else if (Platform.isAndroid || Platform.isIOS) {
+        if (Platform.isAndroid &&
+            (await DeviceInfoPlugin().androidInfo).version.sdkInt < 29) {
+          mode = SystemUiMode.manual;
+        }
+        await SystemChrome.setEnabledSystemUIMode(
+          mode,
+          overlays: SystemUiOverlay.values,
+        );
+        await SystemChrome.setPreferredOrientations([]);
+      } else if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
+        await const MethodChannel('com.alexmercerind/media_kit_video')
+            .invokeMethod(
+          'Utils.ExitNativeFullscreen',
+        );
+      }
+    } catch (exception, stacktrace) {
+      debugPrint(exception.toString());
+      debugPrint(stacktrace.toString());
+    }
+  }
 }

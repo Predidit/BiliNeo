@@ -63,7 +63,7 @@ class _PopularPageState extends State<PopularPage>
       // 两次点击时间间隔超过2秒，重新记录时间戳
       _lastPressedAt = DateTime.now();
       SmartDialog.showToast("再按一次退出应用");
-      return; // 不退出应用
+      return; 
     }
     SystemNavigator.pop(); // 退出应用
   }
@@ -73,7 +73,7 @@ class _PopularPageState extends State<PopularPage>
     super.build(context);
     var themedata = Theme.of(context);
     WidgetsBinding.instance?.addPostFrameCallback((_) {
-      debugPrint('Popular缓存列表非空, 尝试恢复状态');
+      debugPrint('尝试恢复状态');
       scrollController.jumpTo(popularController.scrollOffset);
       debugPrint('Popular加载完成');
     });
