@@ -21,6 +21,13 @@ class _WebviewPageState extends State<WebviewPage> {
         appBar: AppBar(
           centerTitle: false,
           titleSpacing: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Modular.to.navigate('/tab/my/');
+              //Modular.to.pop();
+            },
+          ),
           title: Text(
             _webviewController.pageTitle,
             style: Theme.of(context).textTheme.titleMedium,

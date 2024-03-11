@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:bilineo/pages/menu/menu.dart';
 import 'package:bilineo/bean/settings/settings.dart';
 import 'package:bilineo/utils/storage.dart';
+import 'package:bilineo/request/api.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
@@ -32,7 +33,8 @@ class _MyPageState extends State<MyPage> {
   }
 
   void onBackPressed(BuildContext context) {
-    final navigationBarState = Provider.of<NavigationBarState>(context, listen: false);
+    final navigationBarState =
+        Provider.of<NavigationBarState>(context, listen: false);
     navigationBarState.showNavigate();
     navigationBarState.updateSelectedIndex(0);
     Modular.to.navigate('/tab/popular/');
@@ -102,13 +104,25 @@ class _MyPageState extends State<MyPage> {
               child: userInfoBuild,
             ),
             InkWell(
-              child: SetSwitchItem( 
+              child: SetSwitchItem(
                 title: '港澳台模式',
                 subTitle: '实验性',
                 setKey: SettingBoxKey.aeraUnlock,
                 defaultVal: false,
                 callFn: (_) => {_mineController.clearPopularCache()},
               ),
+            ),
+            ListTile(
+              onTap: () {
+                _mineController.checkUpdata();
+              },
+              dense: false,
+              title: const Text('检查更新'),
+              subtitle: Text('当前版本 ${Api.version}',
+                  style: Theme.of(context)
+                      .textTheme
+                      .labelMedium!
+                      .copyWith(color: Theme.of(context).colorScheme.outline)),
             ),
             Observer(builder: (context) {
               return _mineController.userLogin

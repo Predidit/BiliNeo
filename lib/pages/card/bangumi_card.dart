@@ -9,7 +9,7 @@ import 'package:bilineo/request/bangumi.dart';
 import 'package:bilineo/pages/player/player_controller.dart';
 import 'package:bilineo/pages/video/video_controller.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:bilineo/pages/player/search_type.dart';
+import 'package:bilineo/pages/search/search_type.dart';
 import 'package:bilineo/pages/menu/menu.dart';
 import 'package:provider/provider.dart';
 

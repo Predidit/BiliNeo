@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -20,7 +21,7 @@ class PopularPage extends StatefulWidget {
 class _PopularPageState extends State<PopularPage>
     with AutomaticKeepAliveClientMixin {
   DateTime? _lastPressedAt;
-  // double scrollOffset = 0.0;
+  bool timeout = false;
   final ScrollController scrollController = ScrollController();
   final PopularController popularController = Modular.get<PopularController>();
 
@@ -31,8 +32,12 @@ class _PopularPageState extends State<PopularPage>
   void initState() {
     super.initState();
     debugPrint('Popular初始化成功');
+    timeout = false;
     if (popularController.bangumiList.length < 5) {
       debugPrint('Popular缓存列表为空, 尝试重加载');
+      Timer(const Duration(seconds: 3), () {
+        timeout = true;
+      });
       popularController.scrollOffset = 0.0;
       popularController.queryBangumiListFeed();
     }
@@ -63,7 +68,7 @@ class _PopularPageState extends State<PopularPage>
       // 两次点击时间间隔超过2秒，重新记录时间戳
       _lastPressedAt = DateTime.now();
       SmartDialog.showToast("再按一次退出应用");
-      return; 
+      return;
     }
     SystemNavigator.pop(); // 退出应用
   }
@@ -110,14 +115,30 @@ class _PopularPageState extends State<PopularPage>
                     padding: const EdgeInsets.fromLTRB(
                         StyleString.safeSpace, 0, StyleString.safeSpace, 0),
                     sliver: Observer(builder: (context) {
-                      return (popularController.bangumiList.length < 5)
-                          ? HttpError(
-                              errMsg: '加载推荐流错误',
-                              fn: () {
-                                popularController.queryBangumiListFeed();
-                              },
-                            )
-                          : contentGrid(popularController.bangumiList);
+                      if (popularController.bangumiList.length < 5 &&
+                          timeout == true) {
+                        return HttpError(
+                          errMsg: '加载推荐流错误',
+                          fn: () {
+                            popularController.queryBangumiListFeed();
+                          },
+                        );
+                      }
+                      if (popularController.bangumiList.length < 5 &&
+                          timeout == false) {
+                        return const SliverToBoxAdapter(
+                          child: SizedBox(
+                              height: 600,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  CircularProgressIndicator(),
+                                ],
+                              )),
+                        );
+                      }
+                      return contentGrid(popularController.bangumiList);
                     })),
               ],
             ),

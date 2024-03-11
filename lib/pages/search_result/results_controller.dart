@@ -1,7 +1,7 @@
 import 'package:mobx/mobx.dart';
 import 'package:flutter/material.dart';
 import 'package:bilineo/request/search.dart';
-import 'package:bilineo/pages/player/search_type.dart';
+import 'package:bilineo/pages/search/search_type.dart';
 import 'package:bilineo/utils/utils.dart';
 import 'package:bilineo/utils/id.dart';
 import 'package:flutter_modular/flutter_modular.dart';

@@ -2,10 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'package:bilineo/request/api.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:dio/dio.dart';
 
 class Utils {
   static final Random random = Random();
@@ -226,12 +228,21 @@ class Utils {
   // 检查更新
   static Future<bool> checkUpdata() async {
     return true;
-  }
+  } 
 
   // 下载适用于当前系统的安装包
   static Future matchVersion(data) async {
     
   }
+
+  static Future<String> latest() async {
+    var resp = await Dio().get<Map<String, dynamic>>(Api.latestApp);
+    if (resp.data?.containsKey("tag_name") ?? false) {
+      return resp.data!["tag_name"];
+    } else {
+      throw resp.data?["message"];
+    }
+  } 
 
   // 时间戳转时间
   static tampToSeektime(number) {

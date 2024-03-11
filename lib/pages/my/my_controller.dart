@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:bilineo/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
@@ -12,6 +13,9 @@ import 'package:bilineo/request/request.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:bilineo/pages/popular/popular_controller.dart';
 import 'package:webview_windows/webview_windows.dart' as desktopWebview;
+import 'package:bilineo/request/request.dart';
+import 'package:bilineo/request/api.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 // import 'package:webview_flutter/webview_flutter.dart';
 
@@ -96,7 +100,7 @@ abstract class _MyController with Store {
                 //     .put(LocalCacheKey.accessKey, {'mid': -1, 'value': ''});
 
                 updateLoginStatus(false);
-                
+
                 SmartDialog.dismiss()
                     .then((value) => Modular.to.navigate('/tab/my/'));
               },
@@ -136,7 +140,7 @@ abstract class _MyController with Store {
     userInfo.wallet = userInfoMap?.wallet;
     userFace = userInfoMap?.face ?? '';
     uname = userInfoMap?.uname ?? '';
-    
+
     if (val) {
       currentLevel = userInfoMap?.levelInfo!.currentLevel ?? 0;
       debugPrint('登录状态刷新成功 ${userInfoCache.get('userInfoCache').uname} ');
@@ -144,13 +148,47 @@ abstract class _MyController with Store {
       currentLevel = 0;
     }
 
-    // userInfo.init(userInfoMap);
     userLogin = val ?? false;
-    // if (val) return;
-    //// 头像相关
-    // userFace.value = userInfo != null ? userInfo.face : '';
   }
+
   clearPopularCache() {
     popularController.bangumiList.clear();
+  }
+
+  Future<bool> checkUpdata() async {
+    Utils.latest().then((value) {
+      if (Api.version == value) {
+        SmartDialog.showToast('当前已经是最新版本！');
+      } else {
+        SmartDialog.show(
+          animationType: SmartAnimationType.centerFade_otherSlide,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('发现新版本 $value'),
+              actions: [
+                TextButton(
+                  onPressed: () => SmartDialog.dismiss(),
+                  child: Text(
+                    '稍后',
+                    style:
+                        TextStyle(color: Theme.of(context).colorScheme.outline),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () =>
+                      launchUrl(Uri.parse("${Api.sourceUrl}/releases/latest")),
+                  child: const Text('Github'),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    }).catchError((err) {
+      debugPrint(err.toString());
+      SmartDialog.showToast('当前是最新版本！');
+      return false;
+    });
+    return true;
   }
 }

@@ -3,7 +3,7 @@ import 'package:hive/hive.dart';
 import '../utils/storage.dart';
 import 'package:bilineo/request/request.dart';
 import 'package:bilineo/request/api.dart';
-import 'package:bilineo/pages/player/search_type.dart';
+import 'package:bilineo/pages/search/search_type.dart';
 import 'package:bilineo/bean/bangumi/bangumi_info.dart';
 import 'package:bilineo/pages/search/search_result.dart';
 import 'package:bilineo/pages/search/search_suggest.dart';

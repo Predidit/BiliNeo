@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:bilineo/pages/player/search_type.dart';
+import 'package:bilineo/pages/search/search_type.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:bilineo/pages/search_result/results_controller.dart';
@@ -122,7 +122,7 @@ class _SearchPanelState extends State<SearchPanel>
               }
             } else {
               // 骨架屏
-              return const CircularProgressIndicator();
+              return const Center(child: CircularProgressIndicator());
             }
           },
         );

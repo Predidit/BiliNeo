@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:bilineo/pages/player/search_type.dart';
+import 'package:bilineo/pages/search/search_type.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:bilineo/pages/search/search_controller.dart';
 import 'package:bilineo/pages/search_result/results_item.dart';

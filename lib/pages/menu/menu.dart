@@ -68,11 +68,11 @@ class _BottomMenu extends State<BottomMenu> {
                         icon: Icon(Icons.search_outlined),
                         label: '搜索',
                       ),
-                      NavigationDestination(
-                        selectedIcon: Icon(Icons.code_rounded),
-                        icon: Icon(Icons.code_rounded),
-                        label: '排行榜',
-                      ),
+                      // NavigationDestination(
+                      //   selectedIcon: Icon(Icons.code_rounded),
+                      //   icon: Icon(Icons.code_rounded),
+                      //   label: '排行榜',
+                      // ),
                       NavigationDestination(
                         selectedIcon: Icon(Icons.settings),
                         icon: Icon(Icons.settings_outlined),
@@ -96,12 +96,12 @@ class _BottomMenu extends State<BottomMenu> {
                             Modular.to.navigate('/tab/search/');
                           }
                           break;
+                        // case 2:
+                        //   {
+                        //     Modular.to.navigate('/tab/rating/');
+                        //   }
+                        //   break;
                         case 2:
-                          {
-                            Modular.to.navigate('/tab/rating/');
-                          }
-                          break;
-                        case 3:
                           {
                             Modular.to.navigate('/tab/my/');
                           }
