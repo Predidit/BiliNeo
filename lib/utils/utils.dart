@@ -228,12 +228,10 @@ class Utils {
   // 检查更新
   static Future<bool> checkUpdata() async {
     return true;
-  } 
+  }
 
   // 下载适用于当前系统的安装包
-  static Future matchVersion(data) async {
-    
-  }
+  static Future matchVersion(data) async {}
 
   static Future<String> latest() async {
     var resp = await Dio().get<Map<String, dynamic>>(Api.latestApp);
@@ -242,7 +240,7 @@ class Utils {
     } else {
       throw resp.data?["message"];
     }
-  } 
+  }
 
   // 时间戳转时间
   static tampToSeektime(number) {
@@ -270,13 +268,33 @@ class Utils {
   }
 
   static List<int> generateRandomBytes(int minLength, int maxLength) {
-    return List<int>.generate(
-      random.nextInt(maxLength-minLength+1), (_) => random.nextInt(0x60) + 0x20
-    );
+    return List<int>.generate(random.nextInt(maxLength - minLength + 1),
+        (_) => random.nextInt(0x60) + 0x20);
   }
 
   static String base64EncodeRandomString(int minLength, int maxLength) {
     List<int> randomBytes = generateRandomBytes(minLength, maxLength);
     return base64.encode(randomBytes);
+  }
+
+  static String jsonToWebVTT(Map<String, dynamic> json) {
+    var webvttContent = 'WEBVTT FILE\n\n';
+    int i = 1;
+    for (var entry in json['body']) {
+      final startTime = formatTime(entry['from']);
+      final endTime = formatTime(entry['to']);
+      final content = entry['content'];
+      webvttContent +=
+          '${i.toString()}\n$startTime --> $endTime\n$content\n\n';
+      i = i + 1;
+    }
+    return webvttContent;
+  }
+
+  static String formatTime(double seconds) {
+    final hours = seconds ~/ 3600;
+    final minutes = (seconds % 3600) ~/ 60;
+    final secs = seconds % 60;
+    return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${secs.toStringAsFixed(3).replaceAll('.', '.')}';
   }
 }

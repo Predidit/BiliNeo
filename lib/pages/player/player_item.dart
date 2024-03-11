@@ -45,7 +45,33 @@ class _PlayerItemState extends State<PlayerItem> {
                 ? MediaQuery.of(context).size.width * 9.0 / 32.0
                 : MediaQuery.of(context).size.width * 9.0 / 16.0,
             child: playerController.dataStatus == 'loaded'
-                ? Video(controller: playerController.videoController)
+                ? Video(
+                    controller: playerController.videoController,
+                    subtitleViewConfiguration: SubtitleViewConfiguration(
+                      style: TextStyle(
+                        color: Colors.pink, // 深粉色字体
+                        fontSize: 48.0, // 较大的字号
+                        background: Paint()..color = Colors.transparent, // 背景透明
+                        decoration: TextDecoration.none, // 无下划线
+                        fontWeight: FontWeight.bold, // 字体加粗
+                        shadows: const [
+                          // 显眼的包边
+                          Shadow(
+                            offset: Offset(1.0, 1.0),
+                            blurRadius: 3.0,
+                            color: Color.fromARGB(255, 255, 255, 255),
+                          ),
+                          Shadow(
+                            offset: Offset(-1.0, -1.0),
+                            blurRadius: 3.0,
+                            color: Color.fromARGB(125, 255, 255, 255),
+                          ),
+                        ],
+                      ),
+                      textAlign: TextAlign.center,
+                      padding: const EdgeInsets.all(24.0),
+                    ),
+                  )
                 : SizedBox(
                     child: Center(
                       child: CircularProgressIndicator(),

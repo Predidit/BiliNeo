@@ -13,6 +13,9 @@ class Api {
   // https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/video/videostream_url.md
   static const String videoUrl = '/x/player/wbi/playurl';
 
+  // 字幕
+  static const String subUrl = '/x/player/v2';
+
   // 视频详情
   // 竖屏 https://api.bilibili.com/x/web-interface/view?aid=527403921
   // https://api.bilibili.com/x/web-interface/view/detail  获取视频超详细信息(web端)
@@ -316,7 +319,7 @@ class Api {
       'https://api.github.com/repos/Predidit/BiliNeo/releases/latest';
 
   // 当前版本
-  static const String version = '1.0.0';
+  static const String version = '1.0.1';
 
   static const sourceUrl = "https://github.com/Predidit/BiliNeo";
 

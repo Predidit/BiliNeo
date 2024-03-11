@@ -56,6 +56,8 @@ abstract class _PlayerController with Store {
   late AudioItem firstAudio;
   late String videoUrl;
   late String audioUrl;
+  String subUrl = '';
+  String subContext = '';
   late Duration defaultST;
 
   late Player mediaPlayer;
@@ -105,6 +107,7 @@ abstract class _PlayerController with Store {
         // Todo
         videoSource: videoUrl,
         audioSource: audioUrl,
+        subFiles: subUrl,
         type: DataSourceType.network,
         httpHeaders: {
           'user-agent':
@@ -238,12 +241,13 @@ abstract class _PlayerController with Store {
 
     // 字幕
     if (dataSource.subFiles != '' && dataSource.subFiles != null) {
-      await pp.setProperty(
-        'sub-files',
-        UniversalPlatform.isWindows
-            ? dataSource.subFiles!.replaceAll(';', '\\;')
-            : dataSource.subFiles!.replaceAll(':', '\\:'),
-      );
+      debugPrint('发现可用字幕, 尝试加载');
+      subContext = await VideoRequest.getSub(subUrl);
+      debugPrint('字幕转换并加载完成');
+      // await pp.setProperty(
+      //   'sub-files',
+      //   subContext
+      // );
       await pp.setProperty("subs-with-matching-audio", "no");
       await pp.setProperty("sub-forced-only", "yes");
       await pp.setProperty("blend-subtitles", "video");
@@ -273,6 +277,18 @@ abstract class _PlayerController with Store {
       Media(dataSource.videoSource!, httpHeaders: dataSource.httpHeaders),
       play: false,
     );
+
+    // 设定字幕
+    await mediaPlayer.setSubtitleTrack(SubtitleTrack.data(subContext));
+    // debugPrint('待设定字幕为 $subContext');
+    // await mediaPlayer.setSubtitleTrack(
+    //   SubtitleTrack.uri(
+    //     'https://www.iandevlin.com/html5test/webvtt/upc-video-subtitles-en.vtt',
+    //     title: 'English',
+    //     language: 'en',
+    //   ),
+    // );
+
     // 音轨
     // player.setAudioTrack(
     //   AudioTrack.uri(dataSource.audioSource!),
@@ -284,7 +300,13 @@ abstract class _PlayerController with Store {
   //获得视频详细
   Future queryVideoUrl() async {
     var result = await VideoRequest.videoUrl(cid: cid, bvid: bvid);
+    try {
+      subUrl = await VideoRequest.subUrl(cid: cid, bvid: bvid);
+    } catch (e) {
+      debugPrint(e.toString());
+    }
     debugPrint('已从服务器得到响应');
+    debugPrint('播放器加载字幕 $subUrl');
     if (result['status']) {
       data = result['data'];
       debugPrint('响应合法');
