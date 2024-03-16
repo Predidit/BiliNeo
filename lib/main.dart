@@ -10,7 +10,6 @@ import 'package:bilineo/request/request.dart';
 // import 'package:webview_flutter/webview_flutter.dart';
 
 void main() async {
-  // Todo 用户登出 在线升级
   WidgetsFlutterBinding.ensureInitialized();
   MediaKit.ensureInitialized();
   await GStorage.init();

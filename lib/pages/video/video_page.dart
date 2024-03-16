@@ -94,7 +94,7 @@ class _RatingPageState extends State<VideoPage> {
                 changeFuc: (bvidS, cidS) => videoController.changeSeasonOrbangu(
                     bvidS, cidS, playerController),
               )
-            ],
+            ], 
           );
         }),
       ),

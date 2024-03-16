@@ -46,6 +46,7 @@ class _PopularPageState extends State<PopularPage>
       if (scrollController.position.pixels >=
               scrollController.position.maxScrollExtent - 200 &&
           popularController.isLoadingMore == false) {
+        debugPrint('Popular 正在加载更多');
         popularController.isLoadingMore = true;
         popularController.onLoad();
       }

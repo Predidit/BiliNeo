@@ -23,7 +23,7 @@ abstract class _PopularController with Store {
   bool isLoadingMore = true;
 
   @action
-  Future queryBangumiListFeed({type = 'init'}) async {
+  Future queryBangumiListFeed({type = 'init'}) async { 
     if (type == 'init') {
       _currentPage = 1;
     }

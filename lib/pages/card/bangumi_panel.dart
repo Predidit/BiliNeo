@@ -3,8 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:bilineo/bean/bangumi/bangumi_info.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
-import 'package:hive/hive.dart';
-import 'package:bilineo/utils/storage.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:bilineo/pages/my/user_info.dart';
 
@@ -26,7 +24,7 @@ class BangumiPanel extends StatefulWidget {
   State<BangumiPanel> createState() => _BangumiPanelState();
 }
 
-class _BangumiPanelState extends State<BangumiPanel> {
+class _BangumiPanelState extends State<BangumiPanel> { 
   int currentIndex = 0;
   // 默认未开通
   int vipStatus = 0;

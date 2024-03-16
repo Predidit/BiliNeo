@@ -269,12 +269,12 @@ abstract class _PlayerController with Store {
           ? dataSource.videoSource!
           : "asset://${dataSource.videoSource!}";
       mediaPlayer.open(
-        Media(assetUrl, httpHeaders: dataSource.httpHeaders),
+        Media(assetUrl, httpHeaders: dataSource.httpHeaders), 
         play: false,
       );
     }
     mediaPlayer.open(
-      Media(dataSource.videoSource!, httpHeaders: dataSource.httpHeaders),
+      Media(dataSource.videoSource!, httpHeaders: dataSource.httpHeaders),  
       play: false,
     );
 
