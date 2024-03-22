@@ -498,6 +498,9 @@ abstract class _PlayerController with Store {
   //退出全屏显示
   Future<void> exitFullScreen() async {
     debugPrint('退出全屏模式');
+    if (Platform.isWindows) {
+      await windowManager.setFullScreen(false);
+    }
     dynamic document;
     late SystemUiMode mode = SystemUiMode.edgeToEdge;
     try {
