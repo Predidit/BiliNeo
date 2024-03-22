@@ -29,11 +29,11 @@ class _RatingPageState extends State<VideoPage> {
   }
 
   void onBackPressed(BuildContext context) {
-    if (MediaQuery.of(context).orientation == Orientation.landscape) {
+    if (videoController.androidFullscreen) {
       debugPrint('当前播放器全屏');
       try {
         playerController.exitFullScreen();
-        Modular.to.pop(context);
+        videoController.androidFullscreen = false;
         return;
       } catch (e) {
         debugPrint(e.toString());
@@ -53,12 +53,6 @@ class _RatingPageState extends State<VideoPage> {
     double sheetHeight = MediaQuery.sizeOf(context).height -
         MediaQuery.of(context).padding.top -
         MediaQuery.sizeOf(context).width * 9 / 16;
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     if (playerController.bvid == '') {
       videoController.init(playerController);
     }

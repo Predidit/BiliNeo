@@ -6,6 +6,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:bilineo/pages/video/video_controller.dart' as videoPage;
 
 class PlayerItem extends StatefulWidget {
   const PlayerItem({super.key});
@@ -16,7 +17,7 @@ class PlayerItem extends StatefulWidget {
 
 class _PlayerItemState extends State<PlayerItem> {
   final PlayerController playerController = Modular.get<PlayerController>();
-
+  final videoPage.VideoController videoPageController = Modular.get<videoPage.VideoController>();
   @override
   void initState() {
     super.initState();
@@ -39,11 +40,11 @@ class _PlayerItemState extends State<PlayerItem> {
         Observer(builder: (context) {
           return SizedBox(
             width: Platform.isWindows
-                ? MediaQuery.of(context).size.width / 2
-                : MediaQuery.of(context).size.width,
+                ? MediaQuery.of(context).size.width
+                : ((!videoPageController.androidFullscreen) ? MediaQuery.of(context).size.width : (MediaQuery.of(context).size.height * 16.0 / 9.0)),
             height: Platform.isWindows
-                ? MediaQuery.of(context).size.width * 9.0 / 32.0
-                : MediaQuery.of(context).size.width * 9.0 / 16.0,
+                ? (MediaQuery.of(context).size.width * 9.0 / (16.0))
+                : ((!videoPageController.androidFullscreen) ? MediaQuery.of(context).size.width * 9.0 / 16.0 : MediaQuery.of(context).size.height),
             child: playerController.dataStatus == 'loaded'
                 ? Video(
                     controller: playerController.videoController,

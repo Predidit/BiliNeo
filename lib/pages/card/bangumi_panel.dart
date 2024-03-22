@@ -24,7 +24,7 @@ class BangumiPanel extends StatefulWidget {
   State<BangumiPanel> createState() => _BangumiPanelState();
 }
 
-class _BangumiPanelState extends State<BangumiPanel> { 
+class _BangumiPanelState extends State<BangumiPanel> {
   int currentIndex = 0;
   // 默认未开通
   int vipStatus = 0;
@@ -66,44 +66,54 @@ class _BangumiPanelState extends State<BangumiPanel> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 10, bottom: 6),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text('合集 '),
-              Expanded(
-                child: Text(
-                  ' 正在播放：${widget.pages[currentIndex].longTitle}',
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Theme.of(context).colorScheme.outline,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10),
-              SizedBox(
-                height: 34,
-                child: TextButton(
-                  style: ButtonStyle(
-                    padding: MaterialStateProperty.all(EdgeInsets.zero),
-                  ),
+        Platform.isWindows
+            ? Column(
+                children: [
+                  const SizedBox(height: 7),
+                  SizedBox(
+                      height: 0,
+                      child:
+                          Text(' 正在播放：${widget.pages[currentIndex].longTitle}'))
+                ],
+              )
+            : Padding(
+                padding: const EdgeInsets.only(top: 10, bottom: 6),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('合集 '),
+                    Expanded(
+                      child: Text(
+                        ' 正在播放：${widget.pages[currentIndex].longTitle}',
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Theme.of(context).colorScheme.outline,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    SizedBox(
+                      height: 34,
+                      child: TextButton(
+                        style: ButtonStyle(
+                          padding: MaterialStateProperty.all(EdgeInsets.zero),
+                        ),
 
-                  // Todo 展示更多
-                  onPressed: () => {},
-                  child: Text(
-                    '全${widget.pages.length}话',
-                    style: const TextStyle(fontSize: 13),
-                  ),
+                        // Todo 展示更多
+                        onPressed: () => {},
+                        child: Text(
+                          '全${widget.pages.length}话',
+                          style: const TextStyle(fontSize: 13),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
         SizedBox(
-          height: Platform.isWindows ? 200 : 400,
-          child: GridView.builder( 
+          height: Platform.isWindows ? 72 : 400,
+          child: GridView.builder(
             controller: listViewScrollCtr,
             scrollDirection: Axis.vertical, // 将滚动方向改为竖直
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

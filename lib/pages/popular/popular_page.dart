@@ -158,7 +158,7 @@ class _PopularPageState extends State<PopularPage>
   }
 
   Widget contentGrid(bangumiList) {
-    int crossCount = Platform.isWindows ? 8 : 3;
+    int crossCount = Platform.isWindows ? 6 : 3;
     return SliverGrid(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         // 行间距

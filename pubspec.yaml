@@ -39,7 +39,6 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_modular: ^6.3.2
   mobx: ^2.2.1
-  asuka: ^2.2.0
   flutter_mobx: ^2.0.6+5
   dio: ^5.0.0
   cookie_jar: ^4.0.8
@@ -62,6 +61,7 @@ dependencies:
   webview_flutter: ^4.2.2
   url_launcher: ^6.1.14
   device_info_plus: ^9.0.2
+  window_manager: ^0.3.8
   webview_windows:
     git:
       url: https://github.com/Predidit/flutter-webview-windows.git

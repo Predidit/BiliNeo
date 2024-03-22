@@ -28,6 +28,26 @@ abstract class _VideoController with Store {
   @observable
   late BangumiInfoModel? bangumiItem;
 
+    // 界面管理
+  @observable
+  bool showPositioned = false;
+  @observable
+  bool showPosition = false;
+  @observable
+  bool showBrightness = false;
+  @observable
+  bool showVolume = false;
+
+  // 视频音量/亮度
+  @observable
+  double volume = 0;
+  @observable
+  double brightness = 0;
+
+  // 安卓全屏状态
+  @observable
+  bool androidFullscreen = false;
+
   // final PlayerController playerController = Modular.get<PlayerController>();
 
   Future<String> init(PlayerController playerController) async {
