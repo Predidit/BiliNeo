@@ -128,7 +128,13 @@ class _RatingPageState extends State<VideoPage> with WindowListener {
           body: Observer(builder: (context) {
             return Column(
               children: [
-                Container(
+                 playerController.dataStatus != 'loaded' ?  SizedBox(
+                      height: videoController.androidFullscreen
+                          ? (MediaQuery.of(context).size.height)
+                          : (MediaQuery.of(context).size.width * 9.0 / (16.0)),
+                      width: MediaQuery.of(context).size.width,
+                      child: const Center(child: CircularProgressIndicator()), 
+                      ) : Container(
                   color: Colors.black,
                   child: MouseRegion(
                     onHover: (_) {
