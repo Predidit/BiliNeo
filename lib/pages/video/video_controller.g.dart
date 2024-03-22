@@ -187,6 +187,86 @@ mixin _$VideoController on _VideoController, Store {
     });
   }
 
+  late final _$playingAtom =
+      Atom(name: '_VideoController.playing', context: context);
+
+  @override
+  bool get playing {
+    _$playingAtom.reportRead();
+    return super.playing;
+  }
+
+  @override
+  set playing(bool value) {
+    _$playingAtom.reportWrite(value, super.playing, () {
+      super.playing = value;
+    });
+  }
+
+  late final _$isBufferingAtom =
+      Atom(name: '_VideoController.isBuffering', context: context);
+
+  @override
+  bool get isBuffering {
+    _$isBufferingAtom.reportRead();
+    return super.isBuffering;
+  }
+
+  @override
+  set isBuffering(bool value) {
+    _$isBufferingAtom.reportWrite(value, super.isBuffering, () {
+      super.isBuffering = value;
+    });
+  }
+
+  late final _$currentPositionAtom =
+      Atom(name: '_VideoController.currentPosition', context: context);
+
+  @override
+  Duration get currentPosition {
+    _$currentPositionAtom.reportRead();
+    return super.currentPosition;
+  }
+
+  @override
+  set currentPosition(Duration value) {
+    _$currentPositionAtom.reportWrite(value, super.currentPosition, () {
+      super.currentPosition = value;
+    });
+  }
+
+  late final _$bufferAtom =
+      Atom(name: '_VideoController.buffer', context: context);
+
+  @override
+  Duration get buffer {
+    _$bufferAtom.reportRead();
+    return super.buffer;
+  }
+
+  @override
+  set buffer(Duration value) {
+    _$bufferAtom.reportWrite(value, super.buffer, () {
+      super.buffer = value;
+    });
+  }
+
+  late final _$durationAtom =
+      Atom(name: '_VideoController.duration', context: context);
+
+  @override
+  Duration get duration {
+    _$durationAtom.reportRead();
+    return super.duration;
+  }
+
+  @override
+  set duration(Duration value) {
+    _$durationAtom.reportWrite(value, super.duration, () {
+      super.duration = value;
+    });
+  }
+
   late final _$volumeAtom =
       Atom(name: '_VideoController.volume', context: context);
 
@@ -248,6 +328,11 @@ showPositioned: ${showPositioned},
 showPosition: ${showPosition},
 showBrightness: ${showBrightness},
 showVolume: ${showVolume},
+playing: ${playing},
+isBuffering: ${isBuffering},
+currentPosition: ${currentPosition},
+buffer: ${buffer},
+duration: ${duration},
 volume: ${volume},
 brightness: ${brightness},
 androidFullscreen: ${androidFullscreen}

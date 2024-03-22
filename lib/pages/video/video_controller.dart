@@ -28,6 +28,8 @@ abstract class _VideoController with Store {
   @observable
   late BangumiInfoModel? bangumiItem;
 
+  String from = '/tab/popular/';
+
     // 界面管理
   @observable
   bool showPositioned = false;
@@ -37,6 +39,17 @@ abstract class _VideoController with Store {
   bool showBrightness = false;
   @observable
   bool showVolume = false;
+
+  @observable
+  bool playing = false;
+  @observable
+  bool isBuffering = true;
+  @observable
+  Duration currentPosition = Duration.zero;
+  @observable
+  Duration buffer = Duration.zero;
+  @observable
+  Duration duration = Duration.zero;
 
   // 视频音量/亮度
   @observable

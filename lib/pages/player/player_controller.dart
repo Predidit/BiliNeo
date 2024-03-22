@@ -16,6 +16,8 @@ import 'package:bilineo/request/constants.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:auto_orientation/auto_orientation.dart';
+import 'package:window_manager/window_manager.dart';
 
 part 'player_controller.g.dart';
 
@@ -447,6 +449,50 @@ abstract class _PlayerController with Store {
       SmartDialog.showToast(result['msg'].toString());
     }
     return result;
+  }
+
+  Future<void> enterFullScreen() async {
+    if (Platform.isWindows) {
+      await windowManager.setFullScreen(true);
+      return;
+    }
+    await SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
+    await landScape();
+    await SystemChrome.setEnabledSystemUIMode(
+    SystemUiMode.immersiveSticky,
+  );
+  }
+
+  //横屏
+  Future<void> landScape() async {
+    dynamic document;
+    try {
+      if (kIsWeb) {
+        await document.documentElement?.requestFullscreen();
+      } else if (Platform.isAndroid || Platform.isIOS) {
+        // await SystemChrome.setEnabledSystemUIMode(
+        //   SystemUiMode.immersiveSticky,
+        //   overlays: [],
+        // );
+        // await SystemChrome.setPreferredOrientations(
+        //   [
+        //     DeviceOrientation.landscapeLeft,
+        //     DeviceOrientation.landscapeRight,
+        //   ],
+        // );
+        await AutoOrientation.landscapeAutoMode(forceSensor: true);
+      } else if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
+        await const MethodChannel('com.alexmercerind/media_kit_video')
+            .invokeMethod(
+          'Utils.EnterNativeFullscreen',
+        );
+      }
+    } catch (exception, stacktrace) {
+      debugPrint(exception.toString());
+      debugPrint(stacktrace.toString());
+    }
   }
 
   //退出全屏显示
