@@ -13,6 +13,7 @@ import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:screen_brightness/screen_brightness.dart';
 import 'package:flutter_volume_controller/flutter_volume_controller.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 
 class VideoPage extends StatefulWidget {
   const VideoPage({super.key});
@@ -32,6 +33,7 @@ class _RatingPageState extends State<VideoPage> with WindowListener {
   @override
   void initState() {
     super.initState();
+    videoController.playerSpeed = 1.0;
     if (playerController.bvid == '') {
       videoController.init(playerController).then((_) {
         playerTimer = getPlayerTimer();
@@ -106,6 +108,70 @@ class _RatingPageState extends State<VideoPage> with WindowListener {
     try {
       await ScreenBrightness().setScreenBrightness(value);
     } catch (_) {}
+  }
+
+  // 选择倍速
+  void showSetSpeedSheet() {
+    final double currentSpeed = videoController.playerSpeed;
+    final List<double> speedsList = [
+      0.25,
+      0.5,
+      0.75,
+      1.0,
+      1.25,
+      1.5,
+      1.75,
+      2.0
+    ];
+    SmartDialog.show(useAnimation: false, builder: (context) {
+      return AlertDialog(
+        title: const Text('播放速度'),
+        content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+          return Wrap(
+            spacing: 8,
+            runSpacing: 2,
+            children: [
+              for (final double i in speedsList) ...<Widget>[
+                if (i == currentSpeed) ...<Widget>[
+                  FilledButton(
+                    onPressed: () async {
+                      await videoController.setPlaybackSpeed(i);
+                      SmartDialog.dismiss();
+                    },
+                    child: Text(i.toString()),
+                  ),
+                ] else ...[
+                  FilledButton.tonal(
+                    onPressed: () async {
+                      await videoController.setPlaybackSpeed(i);
+                      SmartDialog.dismiss();
+                    },
+                    child: Text(i.toString()),
+                  ),
+                ]
+              ]
+            ],
+          );
+        }),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => SmartDialog.dismiss(),
+            child: Text(
+              '取消',
+              style: TextStyle(color: Theme.of(context).colorScheme.outline),
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              await videoController.setPlaybackSpeed(1.0);
+              SmartDialog.dismiss();
+            },
+            child: const Text('默认速度'),
+          ),
+        ],
+      );
+    });
   }
 
   getPlayerTimer() {
@@ -191,6 +257,37 @@ class _RatingPageState extends State<VideoPage> with WindowListener {
                                   height: double.infinity,
                                 ),
                               ),
+
+                              // 倍速条
+                              (videoController.showPositioned ||
+                                !playerController.mediaPlayer.state.playing)
+                            ? Positioned(
+                                top: 0,
+                                right: 0,
+                                child: Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 45,
+                                      height: 34,
+                                      child: TextButton(
+                                        style: ButtonStyle(
+                                          padding: MaterialStateProperty.all(
+                                              EdgeInsets.zero),
+                                        ),
+                                        onPressed: () => showSetSpeedSheet(),
+                                        child: Text(
+                                          '${videoController.playerSpeed}X',
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : Container(),
 
                               // 播放器手势控制
                               Positioned.fill(

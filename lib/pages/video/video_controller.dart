@@ -57,6 +57,10 @@ abstract class _VideoController with Store {
   @observable
   double brightness = 0;
 
+  // 播放器倍速
+  @observable
+  double playerSpeed = 1.0;
+
   // 安卓全屏状态
   @observable
   bool androidFullscreen = false;
@@ -83,5 +87,15 @@ abstract class _VideoController with Store {
     playerController.cid = cidS;
     await playerController.init();
     debugPrint('PlayController 重新初始化成功');
+  }
+
+  Future setPlaybackSpeed(double playerSpeed) async {
+    final PlayerController playerController = Modular.get<PlayerController>();
+    try {
+      playerController.mediaPlayer.setRate(playerSpeed);
+    } catch(e) {
+      debugPrint(e.toString());
+    }
+    this.playerSpeed = playerSpeed;
   }
 }
