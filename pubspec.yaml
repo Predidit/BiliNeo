@@ -68,6 +68,10 @@ dependencies:
   url_launcher: ^6.1.14
   device_info_plus: ^9.0.2
   window_manager: ^0.3.8
+  ns_danmaku: 
+    git: 
+        url: https://github.com/xiaoyaocz/flutter_ns_danmaku.git
+        ref: master
   webview_windows:
     git:
       url: https://github.com/Predidit/flutter-webview-windows.git
