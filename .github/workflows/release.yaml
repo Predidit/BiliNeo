@@ -21,7 +21,8 @@
         steps:
           - name: Clone repository
             uses: actions/checkout@v4
-          - run: echo "tag=$(echo ${GITHUB_REF#refs/tags/})" >> $env:GITHUB_ENV
+          - run: echo "tag=$(echo ${GITHUB_REF#refs/tags/})" | Out-File -FilePath $env:GITHUB_ENV -Append
+          - run: echo "${env:tag} build progress"
           - run: choco install yq
           - name: Set up Flutter
             uses: subosito/flutter-action@v2
