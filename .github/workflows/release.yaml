@@ -49,6 +49,7 @@
               repo_token: "${{ secrets.GITHUB_TOKEN }}"
               prerelease: false
               files: |
+                $tag = "${{ github.ref }}".Replace('refs/tags/', '')
                 bilineo_windows_${tag}.zip
                 build/app/outputs/flutter-apk/bilineo_android_${tag}.apk
           - name: Upload outputs
@@ -56,5 +57,6 @@
             with:
               name: outputs
               path: |
+                $tag = "${{ github.ref }}".Replace('refs/tags/', '')
                 bilineo_windows_${tag}.zip
                 build/app/outputs/flutter-apk/bilineo_android_${tag}.apk
