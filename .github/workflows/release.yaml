@@ -53,12 +53,12 @@
               repo_token: "${{ secrets.GITHUB_TOKEN }}"
               prerelease: false
               files: |
-                bilineo_windows_${env:tag}.zip
-                build/app/outputs/flutter-apk/bilineo_android_${env:tag}.apk
+                bilineo_windows_*.zip
+                build/app/outputs/flutter-apk/bilineo_android_*.apk
           - name: Upload outputs
             uses: actions/upload-artifact@v4
             with:
               name: outputs
               path: |
-                bilineo_windows_${env:tag}.zip
-                build/app/outputs/flutter-apk/bilineo_android_${env:tag}.apk
+                bilineo_windows_*.zip
+                build/app/outputs/flutter-apk/bilineo_android_*.apk
