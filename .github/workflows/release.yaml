@@ -21,7 +21,10 @@
         steps:
           - name: Clone repository
             uses: actions/checkout@v4
-          - run: echo "${GITHUB_REF} build progress"
+          - run: |
+                 $tag = "${{ github.ref }}".Replace('refs/tags/', '')
+                 echo "$tag build progress"
+                 echo "tag=$(echo $tag)" >> $env:GITHUB_ENV
           - run: choco install yq
           - name: Set up Flutter
             uses: subosito/flutter-action@v2
@@ -42,19 +45,19 @@
           - run: flutter build windows
     
           - run: |
-                 Compress-Archive build/windows/x64/runner/Release bilineo_windows_${GITHUB_REF#refs/tags/}.zip
-                 Ren build/app/outputs/flutter-apk/app-arm64-v8a-release.apk bilineo_android_${GITHUB_REF#refs/tags/}.apk
+                 Compress-Archive build/windows/x64/runner/Release bilineo_windows_${env:tag}.zip
+                 Ren build/app/outputs/flutter-apk/app-arm64-v8a-release.apk bilineo_android_${env:tag}.apk
           - uses: "marvinpinto/action-automatic-releases@latest"
             with:
               repo_token: "${{ secrets.GITHUB_TOKEN }}"
               prerelease: false
               files: |
-                bilineo_windows_${GITHUB_REF#refs/tags/}.zip
-                build/app/outputs/flutter-apk/bilineo_android_${GITHUB_REF#refs/tags/}.apk
+                bilineo_windows_${env:tag}.zip
+                build/app/outputs/flutter-apk/bilineo_android_${env:tag}.apk
           - name: Upload outputs
             uses: actions/upload-artifact@v4
             with:
               name: outputs
               path: |
-                bilineo_windows_${GITHUB_REF#refs/tags/}.zip
-                build/app/outputs/flutter-apk/bilineo_android_${GITHUB_REF#refs/tags/}.apk
+                bilineo_windows_${env:tag}.zip
+                build/app/outputs/flutter-apk/bilineo_android_${env:tag}.apk
