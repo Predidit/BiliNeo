@@ -41,7 +41,7 @@
           - run: flutter build windows
     
           - run: |
-                 tag=$(echo "${{ github.ref }}" | sed 's/refs\/tags\///')
+                 $tag = "${{ github.ref }}".Replace('refs/tags/', '')
                  Compress-Archive build/windows/x64/runner/Release bilineo_windows_${tag}.zip
                  Ren build/app/outputs/flutter-apk/app-arm64-v8a-release.apk bilineo_android_${tag}.apk
           - uses: "marvinpinto/action-automatic-releases@latest"
