@@ -24,7 +24,8 @@
           - run: |
                  $tag = "${{ github.ref }}".Replace('refs/tags/', '')
                  echo "tag=$(echo $tag)" >> $env:GITHUB_ENV
-          - run: echo "${env:tag} build progress"
+          - run: echo "bilineo_windows_${env:tag}.zip build progress"
+          - run: echo "bilineo_android_${env:tag}.apk build progress"
           - run: choco install yq
           - name: Set up Flutter
             uses: subosito/flutter-action@v2
