@@ -1,8 +1,10 @@
+import 'dart:io';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
+import 'package:flutter_displaymode/flutter_displaymode.dart';
 
 class AppWidget extends StatefulWidget {
   const AppWidget({super.key});
@@ -41,6 +43,22 @@ class _AppWidgetState extends State<AppWidget> {
       ),
     );
     Modular.setObservers([FlutterSmartDialog.observer]);
+
+    // 强制设置高帧率
+    if (Platform.isAndroid) {
+      try {
+        late List modes;
+        FlutterDisplayMode.supported.then((value) {
+          modes = value;
+          DisplayMode f = DisplayMode.auto;
+          DisplayMode preferred = modes.toList().firstWhere((el) => el == f);
+          FlutterDisplayMode.setPreferredMode(preferred);
+        });
+      } catch (e) {
+        debugPrint('高帧率设置失败 ${e.toString()}');
+      }
+    }
+
     return app;
   }
 }
