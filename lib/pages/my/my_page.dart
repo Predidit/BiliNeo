@@ -8,6 +8,9 @@ import 'package:bilineo/pages/menu/menu.dart';
 import 'package:bilineo/bean/settings/settings.dart';
 import 'package:bilineo/utils/storage.dart';
 import 'package:bilineo/request/api.dart';
+import 'package:hive/hive.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:adaptive_theme/adaptive_theme.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
@@ -17,11 +20,15 @@ class MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<MyPage> {
+  Box setting = GStorage.setting;
+  late dynamic defaultThemeMode;
   final _mineController = Modular.get<MyController>();
 
   @override
   void initState() {
     super.initState();
+    defaultThemeMode =
+        setting.get(SettingBoxKey.themeMode, defaultValue: 'system');
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // 在widget构建完成后调用的函数
       final navigationBarState =
@@ -38,6 +45,22 @@ class _MyPageState extends State<MyPage> {
     navigationBarState.showNavigate();
     navigationBarState.updateSelectedIndex(0);
     Modular.to.navigate('/tab/popular/');
+  }
+
+  void updateTheme(String theme) async {
+    if (theme == 'dark') {
+      AdaptiveTheme.of(context).setDark();
+    }
+    if (theme == 'light') {
+      AdaptiveTheme.of(context).setLight();
+    }
+    if (theme == 'system') {
+      AdaptiveTheme.of(context).setSystem();
+    }
+    await setting.put(SettingBoxKey.themeMode, theme);
+    setState(() {
+      defaultThemeMode = theme;
+    });
   }
 
   Widget get userInfoBuild {
@@ -111,6 +134,77 @@ class _MyPageState extends State<MyPage> {
                 defaultVal: false,
                 callFn: (_) => {_mineController.clearPopularCache()},
               ),
+            ),
+            ListTile(
+              onTap: () {
+                SmartDialog.show(
+                    useAnimation: false,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('主题模式'),
+                        content: StatefulBuilder(
+                          builder:
+                              (BuildContext context, StateSetter setState) {
+                            return Wrap(
+                              spacing: 8,
+                              runSpacing: 2,
+                              children: [
+                                defaultThemeMode == 'system'
+                                    ? FilledButton(
+                                        onPressed: () {
+                                          updateTheme('system');
+                                          SmartDialog.dismiss();
+                                        },
+                                        child: const Text("跟随系统"))
+                                    : FilledButton.tonal(
+                                        onPressed: () {
+                                          updateTheme('system');
+                                          SmartDialog.dismiss();
+                                        },
+                                        child: const Text("跟随系统")),
+                                defaultThemeMode == 'light'
+                                    ? FilledButton(
+                                        onPressed: () {
+                                          updateTheme('light');
+                                          SmartDialog.dismiss();
+                                        },
+                                        child: const Text("浅色"))
+                                    : FilledButton.tonal(
+                                        onPressed: () {
+                                          updateTheme('light');
+                                          SmartDialog.dismiss();
+                                        },
+                                        child: const Text("浅色")),
+                                defaultThemeMode == 'dark'
+                                    ? FilledButton(
+                                        onPressed: () {
+                                          updateTheme('dark');
+                                          SmartDialog.dismiss();
+                                        },
+                                        child: const Text("深色"))
+                                    : FilledButton.tonal(
+                                        onPressed: () {
+                                          updateTheme('dark');
+                                          SmartDialog.dismiss();
+                                        },
+                                        child: const Text("深色")),
+                              ],
+                            );
+                          },
+                        ),
+                      );
+                    });
+              },
+              dense: false,
+              title: const Text('主题模式'),
+              subtitle: Text(
+                  defaultThemeMode == 'light'
+                      ? '浅色'
+                      : (defaultThemeMode == 'dark' ? '深色' : '跟随系统'),
+                  style: Theme.of(context)
+                      .textTheme
+                      .labelMedium!
+                      .copyWith(color: Theme.of(context).colorScheme.outline)),
             ),
             ListTile(
               onTap: () {

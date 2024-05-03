@@ -61,6 +61,7 @@ dependencies:
   screen_brightness: ^0.2.2+1
   wakelock_plus: ^1.1.1
   audio_video_progress_bar: ^2.0.2
+  adaptive_theme: ^3.6.0
 
   universal_platform: ^1.0.0+1
   webview_cookie_manager: ^2.0.6

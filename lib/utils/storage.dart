@@ -75,6 +75,7 @@ class LocalCacheKey {
 
 class SettingBoxKey {
   static const String aeraUnlock = 'aeraUnlock',
+  themeMode = 'themeMode',
   // Todo 检查更新
   autoUpdate = '';
 }
