@@ -23,8 +23,8 @@
             uses: actions/checkout@v4
           - run: |
                  $tag = "${{ github.ref }}".Replace('refs/tags/', '')
-                 echo "$tag build progress"
                  echo "tag=$(echo $tag)" >> $env:GITHUB_ENV
+          - run: echo "${env:tag} build progress"
           - run: choco install yq
           - name: Set up Flutter
             uses: subosito/flutter-action@v2
