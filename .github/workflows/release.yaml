@@ -62,3 +62,39 @@
               path: |
                 bilineo_windows_*.zip
                 build/app/outputs/flutter-apk/bilineo_android_*.apk
+
+      flutter-build-linux:
+        name: "Relase for Linux"
+        needs: flutter-build 
+        runs-on: "ubuntu-latest"
+        steps:
+          - name: Clone repository
+            uses: actions/checkout@v4
+          - run: |
+                 $tag = "${{ github.ref }}".Replace('refs/tags/', '')
+                 echo "tag=$(echo $tag)" >> $env:GITHUB_ENV
+          - run: echo "bilineo_linux_${env:tag}.tar.gz build progress"
+          - name: Install dependencies
+            run: |
+              sudo apt-get update
+              sudo apt-get install -y clang cmake libgtk-3-dev ninja-build libayatana-appindicator3-dev mpv
+          - name: Set up Flutter
+            uses: subosito/flutter-action@v2
+            with:
+              channel: stable
+              flutter-version-file: pubspec.yaml
+          - run: flutter pub get
+          - run: flutter build linux
+          - run: tar -zcvf bilineo_linux_${env:tag}.tar.gz build/linux/x64/release/bundle/*
+          - uses: "marvinpinto/action-automatic-releases@latest"
+            with:
+              repo_token: "${{ secrets.GITHUB_TOKEN }}"
+              prerelease: false
+              files: |
+                bilineo_linux_*.tar.gz
+          - name: Upload outputs
+            uses: actions/upload-artifact@v4
+            with:
+              name: outputs-linux
+              path: |
+                bilineo_linux_*.tar.gz
