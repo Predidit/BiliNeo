@@ -175,7 +175,7 @@
               cp android_outputs/* build/unsigned/bilineo_android_${{ env.tag }}.apk
 
           - name: Sign APK
-            uses: Tlaster/android-sign@v1
+            uses: Tlaster/android-sign@v1.2.2
             with:
               releaseDirectory: build/unsigned
               output: build/signed
