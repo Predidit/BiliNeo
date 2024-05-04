@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bilineo/pages/my/my_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -70,8 +72,12 @@ class _MyPageState extends State<MyPage> {
         const SizedBox(height: 5),
         GestureDetector(
           onTap: () {
-            navigationBarState.hideNavigate();
-            _mineController.onLogin();
+            if (!Platform.isLinux) {
+              navigationBarState.hideNavigate();
+              _mineController.onLogin();
+            } else {
+              SmartDialog.showToast('Linux版本账号功能施工中');
+            }
           },
           child: ClipOval(
             child: Container(

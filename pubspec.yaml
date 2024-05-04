@@ -80,6 +80,7 @@ dependencies:
     git:
       url: https://github.com/Predidit/flutter-webview-windows.git
       ref: main
+  webview_universal: ^0.0.5
 
 dev_dependencies:
   flutter_test:

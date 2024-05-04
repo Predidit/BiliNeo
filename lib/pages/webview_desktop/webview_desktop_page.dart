@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:webview_windows/webview_windows.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
