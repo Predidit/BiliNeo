@@ -170,12 +170,20 @@
           - name: Copy android build file to root
             run: cp android_outputs/* bilineo_android_${{ env.tag }}.apk
 
+          - name: Sign APK
+            uses: Tlaster/android-sign@v1
+            with:
+              releaseDirectory: ''
+              signingKeyBase64: ${{ secrets.SIGNING_KEY_BASE64 }}
+              alias: ${{ secrets.KEY_ALIAS }}
+              keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+
           - name: Create release
             uses: "marvinpinto/action-automatic-releases@latest"
             with:
               repo_token: "${{ secrets.GITHUB_TOKEN }}"
               prerelease: false
               files: |
-                bilineo_android_*.apk
+                build/signed/*.apk
                 bilineo_windows_*.zip
                 bilineo_linux_*.tar.gz
