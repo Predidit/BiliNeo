@@ -182,13 +182,16 @@
               cp android_outputs/* build/unsigned/bilineo_android_${{ env.tag }}.apk
 
           - name: Sign APK
-            uses: Tlaster/android-sign@v1.2.2
+            id: sign_app
+            uses: r0adkll/sign-android-release@v1
             with:
               releaseDirectory: build/unsigned
-              output: build/signed
               signingKeyBase64: ${{ secrets.SIGNING_KEY_BASE64 }}
               alias: ${{ secrets.KEY_ALIAS }}
               keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+
+          - name: Copy Signed android build file
+            run: cp ${{steps.sign_app.outputs.signedReleaseFile}} build/signed/bilineo_android_${{ env.tag }}.apk
 
           - name: Create release
             uses: "marvinpinto/action-automatic-releases@latest"
