@@ -13,8 +13,8 @@
             default: 'warning'
     
     jobs:
-      flutter-build:
-        name: "Release"
+      flutter-build-android:
+        name: "Release for android"
         runs-on: "windows-latest"
         permissions: write-all
     
@@ -24,7 +24,6 @@
           - run: |
                  $tag = "${{ github.ref }}".Replace('refs/tags/', '')
                  echo "tag=$(echo $tag)" >> $env:GITHUB_ENV
-          - run: echo "bilineo_windows_${env:tag}.zip build progress"
           - run: echo "bilineo_android_${env:tag}.apk build progress"
           - run: choco install yq
           - name: Set up Flutter
@@ -43,29 +42,58 @@
               java-version: '18'
           - run: flutter pub get
           - run: flutter build apk --split-per-abi
-          - run: flutter build windows
     
           - run: |
-                 Compress-Archive build/windows/x64/runner/Release bilineo_windows_${env:tag}.zip
                  Ren build/app/outputs/flutter-apk/app-arm64-v8a-release.apk bilineo_android_${env:tag}.apk
-          - uses: "marvinpinto/action-automatic-releases@latest"
-            with:
-              repo_token: "${{ secrets.GITHUB_TOKEN }}"
-              prerelease: false
-              files: |
-                bilineo_windows_*.zip
-                build/app/outputs/flutter-apk/bilineo_android_*.apk
-          - name: Upload outputs
+          - name: Upload android outputs
             uses: actions/upload-artifact@v4
             with:
-              name: outputs
+              name: android_outputs
+              path: |
+                build/app/outputs/flutter-apk/bilineo_android_*.apk
+
+      flutter-build-windows:
+        name: "Release for windows"
+        runs-on: "windows-latest"
+        permissions: write-all
+    
+        steps:
+          - name: Clone repository
+            uses: actions/checkout@v4
+          - run: |
+                  $tag = "${{ github.ref }}".Replace('refs/tags/', '')
+                  echo "tag=$(echo $tag)" >> $env:GITHUB_ENV
+          - run: echo "bilineo_windows_${env:tag}.zip build progress"
+          - run: choco install yq
+          - name: Set up Flutter
+            uses: subosito/flutter-action@v2
+            with:
+              channel: stable
+              flutter-version-file: pubspec.yaml
+              cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:" # optional, change this to force refresh cache
+              cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:" # optional, change this to specify the cache path
+              pub-cache-key: "flutter-pub:os:-:channel:-:version:-:arch:-:hash:" # optional, change this to force refresh cache of dart pub get dependencies
+              pub-cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:" # optional, change this to specify the cache path
+          - name: Set up Java
+            uses: actions/setup-java@v4
+            with:
+              distribution: 'temurin'
+              java-version: '18'
+          - run: flutter pub get
+          - run: flutter build windows   
+          - run: |
+                  Compress-Archive build/windows/x64/runner/Release bilineo_windows_${env:tag}.zip
+          - name: Upload windows outputs
+            uses: actions/upload-artifact@v4
+            with:
+              name: windows_outputs
               path: |
                 bilineo_windows_*.zip
-                build/app/outputs/flutter-apk/bilineo_android_*.apk
 
       flutter-build-linux:
         name: "Release for Linux"
         runs-on: "ubuntu-latest"
+        needs: [flutter-build-windows, flutter-build-android] 
         permissions: write-all
         steps:
           - name: Clone repository
@@ -92,18 +120,42 @@
           - name: Build Flutter for Linux
             run: flutter build linux
             shell: bash
-          - name: Package build output
+          - name: Package linux build output
             run: tar -zcvf bilineo_linux_${{ env.tag }}.tar.gz build/linux/x64/release/bundle/*
             shell: bash
+
+          - name: Upload linux outputs
+            uses: actions/upload-artifact@v4
+            with:
+              name: outputs-linux
+              path: bilineo_linux_*.tar.gz
+
+          - name: Download windows build file
+            uses: actions/download-artifact@v4
+            with:
+              name: windows_outputs
+              path: windows_outputs  
+          - name: List files in windows_outputs directory
+            run: ls -l windows_outputs   
+          - name: Copy windows build file to root
+            run: cp windows_outputs/* bilineo_windows_${{ env.tag }}.zip
+
+          - name: Download android build file
+            uses: actions/download-artifact@v4
+            with:
+              name: android_outputs
+              path: android_outputs 
+          - name: List files in android_outputs directory
+            run: ls -l android_outputs   
+          - name: Copy android build file to root
+            run: cp android_outputs/* bilineo_android_${{ env.tag }}.apk
+
           - name: Create release
             uses: "marvinpinto/action-automatic-releases@latest"
             with:
               repo_token: "${{ secrets.GITHUB_TOKEN }}"
               prerelease: false
               files: |
+                bilineo_android_*.apk
+                bilineo_windows_*.zip
                 bilineo_linux_*.tar.gz
-          - name: Upload outputs
-            uses: actions/upload-artifact@v4
-            with:
-              name: outputs-linux
-              path: bilineo_linux_*.tar.gz
