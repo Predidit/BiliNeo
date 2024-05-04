@@ -15,42 +15,51 @@
     jobs:
       flutter-build-android:
         name: "Release for android"
-        runs-on: "windows-latest"
+        runs-on: "ubuntu-latest" 
         permissions: write-all
-    
         steps:
           - name: Clone repository
             uses: actions/checkout@v4
-          - run: |
-                 $tag = "${{ github.ref }}".Replace('refs/tags/', '')
-                 echo "tag=$(echo $tag)" >> $env:GITHUB_ENV
-          - run: echo "bilineo_android_${env:tag}.apk build progress"
-          - run: choco install yq
+          - name: Extract tag name
+            run: echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+            shell: bash
+          - name: Echo build progress
+            run: echo "bilineo_android_${{ env.tag }}.apk build progress"
+            shell: bash
+          - name: Install dependencies
+            run: |
+              sudo apt-get update
+              sudo apt-get install -y clang cmake libgtk-3-dev ninja-build libayatana-appindicator3-dev mpv libmpv-dev libasound2-dev
+            shell: bash
+          - name: Set up JDK 17
+            uses: actions/setup-java@v3
+            with:
+              java-version: '17'
+              distribution: 'temurin'          
+          - name: Setup Android SDK
+            uses: android-actions/setup-android@v3
+          - name: Setup Android build tools
+            run: sdkmanager "build-tools;34.0.0"
           - name: Set up Flutter
             uses: subosito/flutter-action@v2
             with:
               channel: stable
               flutter-version-file: pubspec.yaml
-              cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:" # optional, change this to force refresh cache
-              cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:" # optional, change this to specify the cache path
-              pub-cache-key: "flutter-pub:os:-:channel:-:version:-:arch:-:hash:" # optional, change this to force refresh cache of dart pub get dependencies
-              pub-cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:" # optional, change this to specify the cache path
-          - name: Set up Java
-            uses: actions/setup-java@v4
-            with:
-              distribution: 'temurin'
-              java-version: '18'
-          - run: flutter pub get
-          - run: flutter build apk --split-per-abi
-    
-          - run: |
-                 Ren build/app/outputs/flutter-apk/app-arm64-v8a-release.apk bilineo_android_${env:tag}.apk
+          - name: Get Flutter dependencies
+            run: flutter pub get
+            shell: bash
+          - name: Build Flutter for Android
+            run: flutter build apk --split-per-abi
+            shell: bash
+          - name: Package android build output
+            run: Ren build/app/outputs/flutter-apk/app-arm64-v8a-release.apk bilineo_android_${env:tag}.apk
+            shell: bash
+
           - name: Upload android outputs
             uses: actions/upload-artifact@v4
             with:
               name: android_outputs
-              path: |
-                build/app/outputs/flutter-apk/bilineo_android_*.apk
+              path: bilineo_android_*.apk
 
       flutter-build-windows:
         name: "Release for windows"
