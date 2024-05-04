@@ -6,6 +6,7 @@
 
 - Android 10 及以上
 - Windows 10 1809 及以上
+- Linux (实验性)
 
 ## 功能 / 开发计划
 
@@ -35,7 +36,8 @@ A: B站部分番剧使用外挂字幕而非内嵌字幕，对应接口只支持�
 
 #### Q: 我在尝试自行编译该项目，但是编译不通过。
 
- A: flutter 项目编译需要良好的网络环境，如果您位于中国大陆，可能需要设置恰当的镜像地址。
+A: flutter 项目编译需要良好的网络环境，如果您位于中国大陆，可能需要设置恰当的镜像地址。如果您在编译 `Linux` 版本， 需要运行如下命令来安装编译需要的依赖。 </br></br>
+`sudo apt-get install -y clang cmake libgtk-3-dev ninja-build libayatana-appindicator3-dev mpv libmpv-dev libasound2-dev`
 
 ## 致谢
 
