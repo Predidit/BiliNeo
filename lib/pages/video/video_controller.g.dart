@@ -315,6 +315,22 @@ mixin _$VideoController on _VideoController, Store {
     });
   }
 
+  late final _$danmakuOnAtom =
+      Atom(name: '_VideoController.danmakuOn', context: context);
+
+  @override
+  bool get danmakuOn {
+    _$danmakuOnAtom.reportRead();
+    return super.danmakuOn;
+  }
+
+  @override
+  set danmakuOn(bool value) {
+    _$danmakuOnAtom.reportWrite(value, super.danmakuOn, () {
+      super.danmakuOn = value;
+    });
+  }
+
   late final _$androidFullscreenAtom =
       Atom(name: '_VideoController.androidFullscreen', context: context);
 
@@ -352,6 +368,7 @@ duration: ${duration},
 volume: ${volume},
 brightness: ${brightness},
 playerSpeed: ${playerSpeed},
+danmakuOn: ${danmakuOn},
 androidFullscreen: ${androidFullscreen}
     ''';
   }

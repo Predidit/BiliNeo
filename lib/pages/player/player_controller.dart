@@ -18,6 +18,7 @@ import 'package:flutter/foundation.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:auto_orientation/auto_orientation.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:ns_danmaku/ns_danmaku.dart';
 
 part 'player_controller.g.dart';
 
@@ -89,6 +90,9 @@ abstract class _PlayerController with Store {
   // 播放器尺寸
   late double width;
   late double height;
+
+  // 弹幕控制器
+  late DanmakuController danmakuController;
 
   PlaylistMode looping = PlaylistMode.none;
 
@@ -526,5 +530,25 @@ abstract class _PlayerController with Store {
       debugPrint(exception.toString());
       debugPrint(stacktrace.toString());
     }
+  }
+
+  Future playOrPause() async {
+    mediaPlayer.state.playing ? danmakuController.pause() : danmakuController.resume();
+    await mediaPlayer.playOrPause();
+  }
+
+  Future seek(Duration duration) async {
+    danmakuController.clear();
+    await mediaPlayer.seek(duration);
+  }
+
+  Future pause() async {
+    danmakuController.pause();
+    await mediaPlayer.pause();
+  }
+
+  Future play() async {
+    danmakuController.resume();
+    await mediaPlayer.play();
   }
 }

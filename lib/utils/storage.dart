@@ -77,5 +77,13 @@ class SettingBoxKey {
   static const String aeraUnlock = 'aeraUnlock',
   themeMode = 'themeMode',
   // Todo 检查更新
-  autoUpdate = '';
+  autoUpdate = '',
+  danmakuEnhance = 'danmakuEnhance',
+      danmakuBorder = 'danmakuBorder',
+      danmakuOpacity = 'danmakuOpacity',
+      danmakuFontSize = 'danmakuFontSize',
+      danmakuTop = 'danmakuTop',
+      danmakuScroll = 'danmakuScroll',
+      danmakuBottom = 'danmakuBottom',
+      danmakuArea = 'danmakuArea';
 }

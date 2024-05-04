@@ -14,6 +14,11 @@ import 'package:window_manager/window_manager.dart';
 import 'package:screen_brightness/screen_brightness.dart';
 import 'package:flutter_volume_controller/flutter_volume_controller.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:hive/hive.dart';
+import 'package:bilineo/utils/storage.dart';
+import 'package:ns_danmaku/ns_danmaku.dart';
+import 'package:bilineo/pages/danmaku/controller.dart';
+import 'package:bilineo/bean/danmaku/dm.pb.dart';
 
 class VideoPage extends StatefulWidget {
   const VideoPage({super.key});
@@ -24,16 +29,25 @@ class VideoPage extends StatefulWidget {
 
 class _RatingPageState extends State<VideoPage> with WindowListener {
   // late final BangumiInfoModel? bangumiItem;
+  Box setting = GStorage.setting;
+  late DanmakuController danmakuController;
+  late PlDanmakuController _plDanmakuController;
+  final FocusNode _focusNode = FocusNode();
   final VideoController videoController = Modular.get<VideoController>();
   final PlayerController playerController = Modular.get<PlayerController>();
 
   Timer? hideTimer;
   Timer? playerTimer;
+  int latestAddedPosition = -1;
+
+  // 弹幕
+  final _danmuKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
     videoController.playerSpeed = 1.0;
+    _plDanmakuController = PlDanmakuController(videoController.cid);
     if (playerController.bvid == '') {
       videoController.init(playerController).then((_) {
         playerTimer = getPlayerTimer();
@@ -123,55 +137,58 @@ class _RatingPageState extends State<VideoPage> with WindowListener {
       1.75,
       2.0
     ];
-    SmartDialog.show(useAnimation: false, builder: (context) {
-      return AlertDialog(
-        title: const Text('播放速度'),
-        content: StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-          return Wrap(
-            spacing: 8,
-            runSpacing: 2,
-            children: [
-              for (final double i in speedsList) ...<Widget>[
-                if (i == currentSpeed) ...<Widget>[
-                  FilledButton(
-                    onPressed: () async {
-                      await videoController.setPlaybackSpeed(i);
-                      SmartDialog.dismiss();
-                    },
-                    child: Text(i.toString()),
-                  ),
-                ] else ...[
-                  FilledButton.tonal(
-                    onPressed: () async {
-                      await videoController.setPlaybackSpeed(i);
-                      SmartDialog.dismiss();
-                    },
-                    child: Text(i.toString()),
-                  ),
-                ]
-              ]
+    SmartDialog.show(
+        useAnimation: false,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('播放速度'),
+            content: StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+              return Wrap(
+                spacing: 8,
+                runSpacing: 2,
+                children: [
+                  for (final double i in speedsList) ...<Widget>[
+                    if (i == currentSpeed) ...<Widget>[
+                      FilledButton(
+                        onPressed: () async {
+                          await videoController.setPlaybackSpeed(i);
+                          SmartDialog.dismiss();
+                        },
+                        child: Text(i.toString()),
+                      ),
+                    ] else ...[
+                      FilledButton.tonal(
+                        onPressed: () async {
+                          await videoController.setPlaybackSpeed(i);
+                          SmartDialog.dismiss();
+                        },
+                        child: Text(i.toString()),
+                      ),
+                    ]
+                  ]
+                ],
+              );
+            }),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () => SmartDialog.dismiss(),
+                child: Text(
+                  '取消',
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.outline),
+                ),
+              ),
+              TextButton(
+                onPressed: () async {
+                  await videoController.setPlaybackSpeed(1.0);
+                  SmartDialog.dismiss();
+                },
+                child: const Text('默认速度'),
+              ),
             ],
           );
-        }),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () => SmartDialog.dismiss(),
-            child: Text(
-              '取消',
-              style: TextStyle(color: Theme.of(context).colorScheme.outline),
-            ),
-          ),
-          TextButton(
-            onPressed: () async {
-              await videoController.setPlaybackSpeed(1.0);
-              SmartDialog.dismiss();
-            },
-            child: const Text('默认速度'),
-          ),
-        ],
-      );
-    });
+        });
   }
 
   getPlayerTimer() {
@@ -184,6 +201,32 @@ class _RatingPageState extends State<VideoPage> with WindowListener {
       videoController.buffer = playerController.mediaPlayer.state.buffer;
       videoController.duration = playerController.mediaPlayer.state.duration;
 
+      if (videoController.danmakuOn && videoController.playing) {
+        if (!_plDanmakuController.initiated) {
+          _plDanmakuController.initiate(videoController.duration.inMilliseconds,
+              videoController.currentPosition.inMilliseconds);
+        }
+        int currentPosition = videoController.currentPosition.inMilliseconds;
+        currentPosition -= currentPosition % 100; //取整百的毫秒数
+
+        if (currentPosition == latestAddedPosition) {
+          return;
+        }
+        latestAddedPosition = currentPosition;
+
+        List<DanmakuElem>? currentDanmakuList =
+            _plDanmakuController.getCurrentDanmaku(currentPosition);
+
+        if (currentDanmakuList != null) {
+          danmakuController.addItems(currentDanmakuList
+              .map((e) => DanmakuItem(
+                    e.content,
+                    time: e.progress,
+                  ))
+              .toList());
+        }
+      }
+
       windowManager.addListener(this);
     });
   }
@@ -192,6 +235,23 @@ class _RatingPageState extends State<VideoPage> with WindowListener {
   Widget build(BuildContext context) {
     final bangumiItem = videoController.bangumiItem;
     final navigationBarState = Provider.of<NavigationBarState>(context);
+
+    // 弹幕设置
+    // bool _running = true;
+    bool _border = setting.get(SettingBoxKey.danmakuBorder, defaultValue: true);
+    double _opacity =
+        setting.get(SettingBoxKey.danmakuOpacity, defaultValue: 1.0);
+    double _duration = 8;
+    double _fontSize = setting.get(SettingBoxKey.danmakuFontSize,
+        defaultValue: (Platform.isIOS || Platform.isAndroid) ? 16.0 : 25.0);
+    double danmakuArea =
+        setting.get(SettingBoxKey.danmakuArea, defaultValue: 1.0);
+    bool _hideTop = !setting.get(SettingBoxKey.danmakuTop, defaultValue: true);
+    bool _hideBottom =
+        !setting.get(SettingBoxKey.danmakuBottom, defaultValue: true);
+    bool _hideScroll =
+        !setting.get(SettingBoxKey.danmakuScroll, defaultValue: true);
+
     double sheetHeight = MediaQuery.sizeOf(context).height -
         MediaQuery.of(context).padding.top -
         MediaQuery.sizeOf(context).width * 9 / 16;
@@ -258,36 +318,70 @@ class _RatingPageState extends State<VideoPage> with WindowListener {
                                 ),
                               ),
 
+                              // 弹幕覆盖层
+                              Positioned(
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                height: videoController.androidFullscreen
+                                    ? MediaQuery.sizeOf(context).height *
+                                        danmakuArea
+                                    : (MediaQuery.sizeOf(context).width *
+                                        9 /
+                                        16 *
+                                        danmakuArea),
+                                child: DanmakuView(
+                                  key: _danmuKey,
+                                  createdController: (DanmakuController e) {
+                                    danmakuController = e;
+                                    playerController.danmakuController = e;
+                                    debugPrint('弹幕控制器创建成功');
+                                  },
+                                  option: DanmakuOption(
+                                    hideTop: _hideTop,
+                                    hideScroll: _hideScroll,
+                                    hideBottom: _hideBottom,
+                                    opacity: _opacity,
+                                    fontSize: _fontSize,
+                                    duration: _duration,
+                                    borderText: _border,
+                                  ),
+                                  statusChanged: (e) {},
+                                ),
+                              ),
                               // 倍速条
                               (videoController.showPositioned ||
-                                !playerController.mediaPlayer.state.playing)
-                            ? Positioned(
-                                top: 0,
-                                right: 0,
-                                child: Row(
-                                  children: [
-                                    SizedBox(
-                                      width: 45,
-                                      height: 34,
-                                      child: TextButton(
-                                        style: ButtonStyle(
-                                          padding: MaterialStateProperty.all(
-                                              EdgeInsets.zero),
-                                        ),
-                                        onPressed: () => showSetSpeedSheet(),
-                                        child: Text(
-                                          '${videoController.playerSpeed}X',
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 12,
+                                      !playerController
+                                          .mediaPlayer.state.playing)
+                                  ? Positioned(
+                                      top: 0,
+                                      right: 0,
+                                      child: Row(
+                                        children: [
+                                          SizedBox(
+                                            width: 45,
+                                            height: 34,
+                                            child: TextButton(
+                                              style: ButtonStyle(
+                                                padding:
+                                                    MaterialStateProperty.all(
+                                                        EdgeInsets.zero),
+                                              ),
+                                              onPressed: () =>
+                                                  showSetSpeedSheet(),
+                                              child: Text(
+                                                '${videoController.playerSpeed}X',
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                            ),
                                           ),
-                                        ),
+                                        ],
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            : Container(),
+                                    )
+                                  : Container(),
 
                               // 播放器手势控制
                               Positioned.fill(
@@ -302,7 +396,7 @@ class _RatingPageState extends State<VideoPage> with WindowListener {
                                       // debugPrint('检测到拖动, 定时器取消');
                                       playerTimer!.cancel();
                                     }
-                                    playerController.mediaPlayer.pause();
+                                    playerController.pause();
                                     final double scale = 180000 /
                                         MediaQuery.sizeOf(context).width;
                                     videoController.currentPosition = Duration(
@@ -312,9 +406,9 @@ class _RatingPageState extends State<VideoPage> with WindowListener {
                                             (details.delta.dx * scale).round());
                                   }, onHorizontalDragEnd:
                                       (DragEndDetails details) {
-                                    playerController.mediaPlayer
+                                    playerController
                                         .seek(videoController.currentPosition);
-                                    playerController.mediaPlayer.play();
+                                    playerController.play();
                                     playerTimer = getPlayerTimer();
                                     videoController.showPosition = false;
                                   }, onVerticalDragUpdate:
@@ -365,6 +459,7 @@ class _RatingPageState extends State<VideoPage> with WindowListener {
                                     videoController.showBrightness = false;
                                     videoController.showVolume = false;
                                   })),
+
                               // 顶部进度条
                               Positioned(
                                   top: 25,
@@ -512,11 +607,9 @@ class _RatingPageState extends State<VideoPage> with WindowListener {
                                                 : Icons.play_arrow),
                                             onPressed: () {
                                               if (videoController.playing) {
-                                                playerController.mediaPlayer
-                                                    .pause();
+                                                playerController.pause();
                                               } else {
-                                                playerController.mediaPlayer
-                                                    .play();
+                                                playerController.play();
                                               }
                                             },
                                           ),
@@ -529,10 +622,22 @@ class _RatingPageState extends State<VideoPage> with WindowListener {
                                               buffered: videoController.buffer,
                                               total: videoController.duration,
                                               onSeek: (duration) {
-                                                playerController.mediaPlayer
-                                                    .seek(duration);
+                                                playerController.seek(duration);
                                               },
                                             ),
+                                          ),
+                                          IconButton(
+                                            color: Colors.white,
+                                            icon: Icon(videoController.danmakuOn
+                                                ? Icons.comment
+                                                : Icons.comments_disabled),
+                                            onPressed: () {
+                                              danmakuController.clear();
+                                              videoController.danmakuOn =
+                                                  !videoController.danmakuOn;
+                                              debugPrint(
+                                                  '弹幕开关变更为 ${videoController.danmakuOn}');
+                                            },
                                           ),
                                           IconButton(
                                             color: Colors.white,
@@ -543,7 +648,7 @@ class _RatingPageState extends State<VideoPage> with WindowListener {
                                             onPressed: () {
                                               if (videoController
                                                   .androidFullscreen) {
-                                                    debugPrint('尝试退出全屏');
+                                                debugPrint('尝试退出全屏');
                                                 playerController
                                                     .exitFullScreen();
                                               } else {
