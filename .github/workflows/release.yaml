@@ -169,6 +169,7 @@
             run: ls -l android_outputs   
           - name: Copy android build file to unsigned floder
             run: | 
+              mkdir build
               mkdir build/unsigned
               mkdir build/signed
               cp android_outputs/* build/unsigned/bilineo_android_${{ env.tag }}.apk
