@@ -66,6 +66,7 @@
       flutter-build-linux:
         name: "Release for Linux"
         runs-on: "ubuntu-latest"
+        permissions: write-all
         steps:
           - name: Clone repository
             uses: actions/checkout@v4
