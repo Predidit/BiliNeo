@@ -168,7 +168,10 @@
           - name: List files in android_outputs directory
             run: ls -l android_outputs   
           - name: Copy android build file to unsigned floder
-            run: cp android_outputs/* build/unsigned/bilineo_android_${{ env.tag }}.apk
+            run: | 
+              mkdir build/unsigned
+              mkdir build/signed
+              cp android_outputs/* build/unsigned/bilineo_android_${{ env.tag }}.apk
 
           - name: Sign APK
             uses: Tlaster/android-sign@v1
