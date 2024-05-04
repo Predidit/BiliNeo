@@ -319,7 +319,7 @@ class Api {
       'https://api.github.com/repos/Predidit/BiliNeo/releases/latest';
 
   // 当前版本
-  static const String version = '1.0.4';
+  static const String version = '1.0.5';
 
   static const sourceUrl = "https://github.com/Predidit/BiliNeo";
 
