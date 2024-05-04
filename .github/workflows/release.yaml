@@ -127,9 +127,20 @@
           - name: Upload linux outputs
             uses: actions/upload-artifact@v4
             with:
-              name: outputs-linux
+              name: linux_outputs
               path: bilineo_linux_*.tar.gz
 
+      release:
+        name: "Release"
+        runs-on: "ubuntu-latest"
+        needs: [flutter-build-windows, flutter-build-android, flutter-build-linux] 
+        permissions: write-all
+        steps:
+          - name: Clone repository
+            uses: actions/checkout@v4
+          - name: Extract tag name
+            run: echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+            shell: bash
           - name: Download windows build file
             uses: actions/download-artifact@v4
             with:
@@ -139,6 +150,16 @@
             run: ls -l windows_outputs   
           - name: Copy windows build file to root
             run: cp windows_outputs/* bilineo_windows_${{ env.tag }}.zip
+
+          - name: Download linux build file
+            uses: actions/download-artifact@v4
+            with:
+              name: linux_outputs
+              path: linux_outputs  
+          - name: List files in linux_outputs directory
+            run: ls -l linux_outputs   
+          - name: Copy linux build file to root
+            run: cp linux_outputs/* bilineo_linux_${{ env.tag }}.tar.gz
 
           - name: Download android build file
             uses: actions/download-artifact@v4
