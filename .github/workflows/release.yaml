@@ -87,7 +87,7 @@
           - run: flutter pub get
           - run: flutter build windows   
           - run: |
-                  Compress-Archive build/windows/x64/runner/Release bilineo_windows_${env:tag}.zip
+                  Compress-Archive build/windows/x64/runner/Release/* bilineo_windows_${env:tag}.zip
           - name: Upload windows outputs
             uses: actions/upload-artifact@v4
             with:
@@ -125,7 +125,7 @@
             run: flutter build linux
             shell: bash
           - name: Package linux build output
-            run: tar -zcvf bilineo_linux_${{ env.tag }}.tar.gz build/linux/x64/release/bundle/*
+            run: tar -zcvf build/linux/x64/release/bundle/* bilineo_linux_${{ env.tag }}.tar.gz
             shell: bash
 
           - name: Upload linux outputs
