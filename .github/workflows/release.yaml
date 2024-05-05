@@ -125,7 +125,7 @@
             run: flutter build linux
             shell: bash
           - name: Package linux build output
-            run: tar -zcvf build/linux/x64/release/bundle/* bilineo_linux_${{ env.tag }}.tar.gz
+            run: tar -zcvf bilineo_linux_${{ env.tag }}.tar.gz  -C build/linux/x64/release/bundle/* .
             shell: bash
 
           - name: Upload linux outputs
