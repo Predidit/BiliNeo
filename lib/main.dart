@@ -25,7 +25,7 @@ void main() async {
       await windowManager.show();
       await windowManager.focus();
     });
-    windowManager.setMaximizable(false);
+    // windowManager.setMaximizable(false);
   }
   MediaKit.ensureInitialized();
   await GStorage.init();
