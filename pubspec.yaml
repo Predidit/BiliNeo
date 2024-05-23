@@ -20,7 +20,7 @@ version: 1.0.5+1
 
 environment:
   sdk: '>=3.2.6 <4.0.0'
-  flutter: 3.19.6
+  flutter: 3.22.1
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -74,7 +74,7 @@ dependencies:
   protobuf: ^3.0.0
   ns_danmaku: 
     git: 
-        url: https://github.com/xiaoyaocz/flutter_ns_danmaku.git
+        url: https://github.com/Predidit/flutter_ns_danmaku.git
         ref: master
   webview_windows:
     git:
